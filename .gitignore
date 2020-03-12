@@ -1,0 +1,8 @@
+# R files
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# File types
+*.pdf
