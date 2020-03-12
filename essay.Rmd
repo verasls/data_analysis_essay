@@ -1,0 +1,14 @@
+---
+output:
+  pdf_document:
+    highlight: tango
+    number_sections: yes
+    toc_depth: 2
+    includes:
+      in_header: preamble.tex
+      before_body: title.tex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
