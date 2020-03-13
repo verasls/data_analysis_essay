@@ -131,3 +131,15 @@ leveneTest(anxiety$post_test, anxiety$exercise, center = median)
 # ** Independence of the covariate and treatment effect -------------------
 
 aov(formula = pre_test ~ exercise, data = anxiety) %>% summary()
+
+# ANCOVA ------------------------------------------------------------------
+
+# Set contrasts to Helmert (orthogonal)
+contrasts(anxiety$exercise) <- contr.helmert(3)
+
+# Run ANCOVA
+ancova <- aov(formula = post_test ~ exercise + pre_test, data = anxiety)
+summary(ancova)
+
+# Get type III sum of squares
+Anova(ancova, type = "III")
