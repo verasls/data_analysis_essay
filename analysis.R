@@ -24,11 +24,23 @@ anxiety_long <- anxiety %>%
 
 # Recode time into a factor
 anxiety_long$time <- as_factor(anxiety_long$time)
+anxiety_long$time <- recode_factor(
+  anxiety_long$time, 
+  "pre_test" = "Pre-test",
+  "post_test" = "Post-test"
+)
 
-# Plot
-ggplot(data = anxiety_long) +
-  geom_boxplot(mapping = aes(x = group, y = score)) +
-  facet_wrap(~time) +
+# Boxplot
+ggplot(data = anxiety_long, mapping = aes(x = group, y = score)) +
+  geom_boxplot() +
+  geom_dotplot(
+    binaxis = "y",
+    stackdir = "center",
+    dotsize = 0.7,
+    binwidth = 0.3,
+    fill= "white"
+  ) +
+  facet_wrap(~time)
 
 # Check assumptions -------------------------------------------------------
 
@@ -45,10 +57,9 @@ lm(formula = post_test ~ pre_test, data = filter(anxiety, group == "grp3")) %>%
   summary()
 
 # Plot
-ggplot(data = anxiety) +
-  geom_point(mapping = aes(x = pre_test, y = post_test, colour = group)) +
+ggplot(data = anxiety, mapping = aes(x = pre_test, y = post_test, colour = group)) +
+  geom_point() +
   geom_smooth(
-    mapping = aes(x = pre_test, y = post_test, colour = group),
     method = "lm",
     se = FALSE
   )
