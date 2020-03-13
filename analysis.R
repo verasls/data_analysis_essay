@@ -8,9 +8,18 @@ library(car)
 
 data("anxiety", package = "datarium")
 
+# Select and rename variables
 anxiety <- anxiety %>% 
   as_tibble() %>% 
-  select(id, group, pre_test = t1, post_test = t3)
+  select(id, exercise = group, pre_test = t1, post_test = t3)
+
+# Recode exercise factors
+anxiety$exercise <- recode_factor(
+  anxiety$exercise,
+  "grp1" = "Low",
+  "grp2" = "Moderate",
+  "grp3" = "High"
+)
 
 # Explore data ------------------------------------------------------------
 
@@ -31,7 +40,7 @@ anxiety_long$time <- recode_factor(
 )
 
 # Boxplot
-ggplot(data = anxiety_long, mapping = aes(x = group, y = score)) +
+ggplot(data = anxiety_long, mapping = aes(x = exercise, y = score)) +
   geom_boxplot() +
   geom_dotplot(
     binaxis = "y",
@@ -52,55 +61,59 @@ bin_width <- function(variable) {
 
 ggplot(data = anxiety, mapping = aes(pre_test)) +
   geom_histogram(binwidth = bin_width(anxiety$pre_test)) +
-  facet_wrap(~group) +
+  facet_wrap(~exercise) +
   labs(x = "Pre-test", y = "")
 
-bw <- 2 * IQR(anxiety$post_test) / length(anxiety$post_test)^(1/3)
 ggplot(data = anxiety, mapping = aes(post_test)) +
   geom_histogram(binwidth = bin_width(anxiety$post_test)) +
-  facet_wrap(~group) +
+  facet_wrap(~exercise) +
   labs(x = "Post-test", y = "")
 
 # Normality tests
 # Separate the groups into 3 different data frames
-anxiety_grp1 <- filter(anxiety, group == "grp1")
-anxiety_grp2 <- filter(anxiety, group == "grp2")
-anxiety_grp3 <- filter(anxiety, group == "grp3")
+anxiety_l <- filter(anxiety, exercise == "Low")
+anxiety_m <- filter(anxiety, exercise == "Moderate")
+anxiety_h <- filter(anxiety, exercise == "High")
 # Run normality tests
-shapiro.test(anxiety_grp1$pre_test)
-shapiro.test(anxiety_grp2$pre_test)
-shapiro.test(anxiety_grp3$pre_test)
+shapiro.test(anxiety_l$pre_test)
+shapiro.test(anxiety_m$pre_test)
+shapiro.test(anxiety_h$pre_test)
 
-shapiro.test(anxiety_grp1$post_test)
-shapiro.test(anxiety_grp2$post_test)
-shapiro.test(anxiety_grp3$post_test)
+shapiro.test(anxiety_l$post_test)
+shapiro.test(anxiety_m$post_test)
+shapiro.test(anxiety_h$post_test)
 
 # Check assumptions -------------------------------------------------------
 
-# Linearity assumption ----------------------------------------------------
+# ** Linearity assumption -------------------------------------------------
 
 # Build linear regression models using data from each group separately
-lm(formula = post_test ~ pre_test, data = filter(anxiety, group == "grp1")) %>% 
-  summary()
+lm(formula = post_test ~ pre_test, data = anxiety_l) %>% summary()
 
-lm(formula = post_test ~ pre_test, data = filter(anxiety, group == "grp2")) %>% 
-  summary()
+lm(formula = post_test ~ pre_test, data = anxiety_m) %>% summary()
 
-lm(formula = post_test ~ pre_test, data = filter(anxiety, group == "grp3")) %>% 
-  summary()
+lm(formula = post_test ~ pre_test, data = anxiety_h) %>% summary()
 
 # Plot
-ggplot(data = anxiety, mapping = aes(x = pre_test, y = post_test, colour = group)) +
+ggplot(
+  data = anxiety, 
+  mapping = aes(x = pre_test, y = post_test, colour = exercise)
+) +
   geom_point() +
   geom_smooth(
     method = "lm",
     se = FALSE
+  ) +
+  guides(color=guide_legend("Exercise")) +
+  labs(
+    x = "Pre-test",
+    y = "Post-test"
   )
+  
+# ** Homegeneity of regression slopes -------------------------------------
 
-# Homegeneity of regression slopes ----------------------------------------
+aov(formula = post_test ~ pre_test * exercise, data = anxiety) %>% summary()
 
-aov(formula = post_test ~ pre_test * group, data = anxiety) %>% summary()
+# ** Homogeneity of variance ----------------------------------------------
 
-# Homogeneity of variance -------------------------------------------------
-
-leveneTest(anxiety$post_test, anxiety$group, center = median)
+leveneTest(anxiety$post_test, anxiety$exercise, center = median)
