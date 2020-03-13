@@ -40,7 +40,40 @@ ggplot(data = anxiety_long, mapping = aes(x = group, y = score)) +
     binwidth = 0.3,
     fill= "white"
   ) +
-  facet_wrap(~time)
+  facet_wrap(~time) +
+  labs(x = "Group", y = "Score")
+
+# Histogram
+# Define function to select best bin width
+bin_width <- function(variable) {
+  bw <- 2 * IQR(variable) / length(variable)^(1/3)
+  return(bw)
+}
+
+ggplot(data = anxiety, mapping = aes(pre_test)) +
+  geom_histogram(binwidth = bin_width(anxiety$pre_test)) +
+  facet_wrap(~group) +
+  labs(x = "Pre-test", y = "")
+
+bw <- 2 * IQR(anxiety$post_test) / length(anxiety$post_test)^(1/3)
+ggplot(data = anxiety, mapping = aes(post_test)) +
+  geom_histogram(binwidth = bin_width(anxiety$post_test)) +
+  facet_wrap(~group) +
+  labs(x = "Post-test", y = "")
+
+# Normality tests
+# Separate the groups into 3 different data frames
+anxiety_grp1 <- filter(anxiety, group == "grp1")
+anxiety_grp2 <- filter(anxiety, group == "grp2")
+anxiety_grp3 <- filter(anxiety, group == "grp3")
+# Run normality tests
+shapiro.test(anxiety_grp1$pre_test)
+shapiro.test(anxiety_grp2$pre_test)
+shapiro.test(anxiety_grp3$pre_test)
+
+shapiro.test(anxiety_grp1$post_test)
+shapiro.test(anxiety_grp2$post_test)
+shapiro.test(anxiety_grp3$post_test)
 
 # Check assumptions -------------------------------------------------------
 
