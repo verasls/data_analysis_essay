@@ -95,7 +95,7 @@ anxiety %>%
 
 # Check assumptions -------------------------------------------------------
 
-# ** Linearity assumption -------------------------------------------------
+# ** Linearity between the covariate and the outcome variable -------------
 
 # Build linear regression models using data from each group separately
 lm(formula = post_test ~ pre_test, data = anxiety_l) %>% summary()
@@ -127,3 +127,7 @@ aov(formula = post_test ~ pre_test * exercise, data = anxiety) %>% summary()
 # ** Homogeneity of variance ----------------------------------------------
 
 leveneTest(anxiety$post_test, anxiety$exercise, center = median)
+
+# ** Independence of the covariate and treatment effect -------------------
+
+aov(formula = pre_test ~ exercise, data = anxiety) %>% summary()
