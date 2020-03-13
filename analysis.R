@@ -83,6 +83,16 @@ shapiro.test(anxiety_l$post_test)
 shapiro.test(anxiety_m$post_test)
 shapiro.test(anxiety_h$post_test)
 
+# Descriptives
+anxiety %>% 
+  group_by(exercise) %>% 
+  summarise(
+    pre_test_mean = mean(pre_test),
+    pre_test_SD = sd(pre_test),
+    post_test_mean = mean(post_test),
+    post_test_SD = sd(post_test)
+  )
+
 # Check assumptions -------------------------------------------------------
 
 # ** Linearity assumption -------------------------------------------------
