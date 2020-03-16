@@ -1,8 +1,8 @@
 # Load package and functions ----------------------------------------------
 
-library(datarium)
 library(tidyverse)
 library(car)
+library(emmeans)
 
 # Read and prepare data ---------------------------------------------------
 
@@ -16,7 +16,7 @@ anxiety <- anxiety %>%
 # Recode exercise factors
 anxiety$exercise <- recode_factor(
   anxiety$exercise,
-  "grp1" = "Low",
+  "grp1" = "Control",
   "grp2" = "Moderate",
   "grp3" = "High"
 )
@@ -71,7 +71,7 @@ ggplot(data = anxiety, mapping = aes(post_test)) +
 
 # Normality tests
 # Separate the groups into 3 different data frames
-anxiety_l <- filter(anxiety, exercise == "Low")
+anxiety_c <- filter(anxiety, exercise == "Control")
 anxiety_m <- filter(anxiety, exercise == "Moderate")
 anxiety_h <- filter(anxiety, exercise == "High")
 # Run normality tests
@@ -138,8 +138,11 @@ aov(formula = pre_test ~ exercise, data = anxiety) %>% summary()
 contrasts(anxiety$exercise) <- contr.helmert(3)
 
 # Run ANCOVA
-ancova <- aov(formula = post_test ~ exercise + pre_test, data = anxiety)
+ancova <- aov(formula = post_test ~ pre_test + exercise, data = anxiety)
 summary(ancova)
 
 # Get type III sum of squares
 Anova(ancova, type = "III")
+
+# Estimated marginal means
+emmeans(ancova, ~ exercise)
