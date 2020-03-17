@@ -134,15 +134,17 @@ aov(formula = pre_test ~ exercise, data = anxiety) %>% summary()
 
 # ANCOVA ------------------------------------------------------------------
 
-# Set contrasts to Helmert (orthogonal)
-contrasts(anxiety$exercise) <- contr.helmert(3)
+# Set orthogonal contrasts
+contrasts(anxiety$exercise) <- cbind(c(2, -1, -1), c(0, 1, -1))
 
 # Run ANCOVA
 ancova <- aov(formula = post_test ~ pre_test + exercise, data = anxiety)
-summary(ancova)
 
 # Get type III sum of squares
 Anova(ancova, type = "III")
 
 # Estimated marginal means
 emmeans(ancova, ~ exercise)
+
+# Get regression coefficients
+summary.lm(ancova)
