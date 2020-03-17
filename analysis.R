@@ -75,11 +75,11 @@ anxiety_c <- filter(anxiety, exercise == "Control")
 anxiety_m <- filter(anxiety, exercise == "Moderate")
 anxiety_h <- filter(anxiety, exercise == "High")
 # Run normality tests
-shapiro.test(anxiety_l$pre_test)
+shapiro.test(anxiety_c$pre_test)
 shapiro.test(anxiety_m$pre_test)
 shapiro.test(anxiety_h$pre_test)
 
-shapiro.test(anxiety_l$post_test)
+shapiro.test(anxiety_c$post_test)
 shapiro.test(anxiety_m$post_test)
 shapiro.test(anxiety_h$post_test)
 
@@ -91,14 +91,15 @@ anxiety %>%
     pre_test_SD = sd(pre_test),
     post_test_mean = mean(post_test),
     post_test_SD = sd(post_test)
-  )
+  ) %>% 
+  as.data.frame()
 
 # Check assumptions -------------------------------------------------------
 
 # ** Linearity between the covariate and the outcome variable -------------
 
 # Build linear regression models using data from each group separately
-lm(formula = post_test ~ pre_test, data = anxiety_l) %>% summary()
+lm(formula = post_test ~ pre_test, data = anxiety_c) %>% summary()
 
 lm(formula = post_test ~ pre_test, data = anxiety_m) %>% summary()
 
