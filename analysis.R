@@ -134,9 +134,6 @@ aov(formula = pre_test ~ exercise, data = anxiety) %>% summary()
 
 # ANCOVA ------------------------------------------------------------------
 
-# Set orthogonal contrasts
-contrasts(anxiety$exercise) <- cbind(c(2, -1, -1), c(0, 1, -1))
-
 # Run ANCOVA
 ancova <- aov(formula = post_test ~ pre_test + exercise, data = anxiety)
 
@@ -146,5 +143,20 @@ Anova(ancova, type = "III")
 # Estimated marginal means
 emmeans(ancova, ~ exercise)
 
-# Get regression coefficients
+# Get model coefficients
 summary.lm(ancova)
+
+# Set orthogonal contrasts and re run the model
+contrasts(anxiety$exercise) <- cbind(c(2, -1, -1), c(0, 1, -1))
+
+# Run ANCOVA
+ancova_2 <- aov(formula = post_test ~ pre_test + exercise, data = anxiety)
+
+# Get type III sum of squares
+Anova(ancova_2, type = "III")
+
+# Estimated marginal means
+emmeans(ancova_2, ~ exercise)
+
+# Get model coefficients
+summary.lm(ancova_2)
