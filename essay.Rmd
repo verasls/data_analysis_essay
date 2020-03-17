@@ -7,6 +7,9 @@ output:
     includes:
       in_header: preamble.tex
       before_body: title.tex
+    citation_package: biblatex
+bibliography: bibliography.bib
+biblio-style: apa
 ---
 
 ```{r setup, include=FALSE}
