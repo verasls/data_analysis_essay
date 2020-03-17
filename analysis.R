@@ -161,3 +161,12 @@ emmeans(ancova_2, ~ exercise)
 
 # Get model coefficients
 summary.lm(ancova_2)
+
+# Model diagnostics plots
+plot(ancova_2, 1) # Homogeneity of variance
+plot(ancova_2, 2) # Q-Q plot
+
+# Post hoc tests ----------------------------------------------------------
+
+pairs(emmeans(ancova_2, ~ exercise), adjust = "Bonferroni")
+pairs(emmeans(ancova_2, ~ exercise), adjust = "Holm")
