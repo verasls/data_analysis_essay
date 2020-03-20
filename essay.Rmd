@@ -1,6 +1,6 @@
 ---
 output:
-  pdf_document:
+  bookdown::pdf_document2:
     highlight: tango
     number_sections: yes
     toc_depth: 2
@@ -15,3 +15,130 @@ biblio-style: apa
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+# Performing an ANCOVA using R
+
+## Installing and loading necessary packages
+
+\vspace{0.5em}
+
+In order to perform all the analysis in this tutorial, you will need to install the following packages:
+
+- `datarium`: For accessing sample data;
+- `tidyverse`: For data manipulation and plotting;
+- `car`: To calculate the Type III analysis of variance (ANOVA) table and to execute the Levene's test;
+- `emmeans`: To compute the estimated marginal means from the models.
+
+Execute these commands to install the packages:
+
+\vspace{0.5em}
+
+```{r install_packs, eval=FALSE}
+install.packages("tidyverse")
+install.packages("car")
+install.packages("emmeans")
+```
+
+\vspace{0.5em}
+
+And then, these commands to load the packages into your R session.
+
+\vspace{0.5em}
+
+```{r load_packs, message=FALSE}
+library(tidyverse)
+library(car)
+library(emmeans)
+```
+
+## Entering data
+
+For this tutorial, we will be using the `anxiety` dataset contained in the `datarium` package. As describe by the package manual, this data contains 45 individuals (`id` variable), divided into three groups (`group` variable), and their measured anxiety score at three time points (`t1`, `t2`, and `t3` variables). These data can be load and displayed with the following commands:
+
+\vspace{0.5em}
+
+```{r read_data}
+data("anxiety", package = "datarium")
+anxiety %>% print(n = Inf)
+```
+
+\vspace{0.5em}
+
+In the subsequent analysis, we will only need the anxiety scores from the first and last names. Therefore, we will select only these colums and change the varible names to `pre_test` and `post_test`, respectively. Also, we can rename the levels of the `group` variable to facilitate the interpretation: `grp1` will be renamed to `Control`, `grp2` to `Moderate`, and `grp3` to `High`, referring to the control group, and moderate and high intensity exercise groups, respectively. These changes can be done executing:
+
+\vspace{0.5em}
+
+```{r clean_data}
+# Select and rename variables
+anxiety <- anxiety %>% 
+  as_tibble() %>% 
+  select(id, group, pre_test = t1, post_test = t3)
+
+# Recode exercise factors
+anxiety$group <- recode_factor(
+  anxiety$group,
+  "grp1" = "Control",
+  "grp2" = "Moderate",
+  "grp3" = "High"
+)
+```
+
+\vspace{0.5em}
+
+And the data frame can, then, be inspected:
+
+\vspace{0.5em}
+
+```{r show_data}
+anxiety
+```
+
+\vspace{0.5em}
+
+The data, until now, is in wide format, with multiple observations of a same individual in the same line. Some analyses will need the data to be in the long format, with each observation of an individual in a different line. To create a new data frame in the long format, execute the following commands:
+
+\vspace{0.5em}
+
+```{r reshape_data}
+# Reshape data
+anxiety_long <- anxiety %>% 
+  pivot_longer(
+    c(pre_test, post_test),
+    names_to = "time",
+    values_to = "score"
+  )
+
+# Recode time into a factor
+anxiety_long$time <- as_factor(anxiety_long$time)
+anxiety_long$time <- recode_factor(
+  anxiety_long$time, 
+  "pre_test" = "Pre-test",
+  "post_test" = "Post-test"
+)
+
+anxiety_long
+```
+
+## Exploring data
+
+First, lets explore the data with some plots. We can generate boxplots for the three groups and two time points:
+
+\vspace{0.5em}
+
+```{r boxplot, fig.pos="H", out.extra="", fig.cap="Boxplot of anxiety score separated by group (Control, Moderate and High) and time (Pre-test and Post-test)"}
+ggplot(data = anxiety_long, mapping = aes(x = group, y = score)) +
+  geom_boxplot() +
+  geom_dotplot(
+    binaxis = "y",
+    stackdir = "center",
+    dotsize = 0.7,
+    binwidth = 0.3,
+    fill= "white"
+  ) +
+  facet_wrap(~time) +
+  labs(x = "Group", y = "Anxiety score")
+```
+
+\vspace{0.5em}
+
+As can be observed in the Figure \@ref(fig:boxplot) boxplots, pre-test anxiety score values are roughly equal among groups, while the post-test scores tend to be lower for the moderate, but mainly for the high intensty group, compared to the control. This indicates that there is at least a tendency to the exercise to decrease an individual`s anxiety level, and exercise intensity may play a role in it. Also, there is no clear difference in the spread of the scores among groups both time points.
