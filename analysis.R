@@ -1,4 +1,4 @@
-# Load package and functions ----------------------------------------------
+# Load packages -----------------------------------------------------------
 
 library(tidyverse)
 library(car)
@@ -11,17 +11,15 @@ data("anxiety", package = "datarium")
 # Select and rename variables
 anxiety <- anxiety %>% 
   as_tibble() %>% 
-  select(id, exercise = group, pre_test = t1, post_test = t3)
+  select(id, group, pre_test = t1, post_test = t3)
 
-# Recode exercise factors
-anxiety$exercise <- recode_factor(
-  anxiety$exercise,
+# Recode group factors
+anxiety$group <- recode_factor(
+  anxiety$group,
   "grp1" = "Control",
   "grp2" = "Moderate",
   "grp3" = "High"
 )
-
-# Explore data ------------------------------------------------------------
 
 # Reshape data
 anxiety_long <- anxiety %>% 
@@ -39,8 +37,10 @@ anxiety_long$time <- recode_factor(
   "post_test" = "Post-test"
 )
 
+# Explore data ------------------------------------------------------------
+
 # Boxplot
-ggplot(data = anxiety_long, mapping = aes(x = exercise, y = score)) +
+ggplot(data = anxiety_long, mapping = aes(x = group, y = score)) +
   geom_boxplot() +
   geom_dotplot(
     binaxis = "y",
@@ -50,7 +50,7 @@ ggplot(data = anxiety_long, mapping = aes(x = exercise, y = score)) +
     fill= "white"
   ) +
   facet_wrap(~time) +
-  labs(x = "Group", y = "Score")
+  labs(x = "Group", y = "Anxiety score")
 
 # Histogram
 # Define function to select best bin width
@@ -61,19 +61,19 @@ bin_width <- function(variable) {
 
 ggplot(data = anxiety, mapping = aes(pre_test)) +
   geom_histogram(binwidth = bin_width(anxiety$pre_test)) +
-  facet_wrap(~exercise) +
+  facet_wrap(~group) +
   labs(x = "Pre-test", y = "")
 
 ggplot(data = anxiety, mapping = aes(post_test)) +
   geom_histogram(binwidth = bin_width(anxiety$post_test)) +
-  facet_wrap(~exercise) +
+  facet_wrap(~group) +
   labs(x = "Post-test", y = "")
 
 # Normality tests
 # Separate the groups into 3 different data frames
-anxiety_c <- filter(anxiety, exercise == "Control")
-anxiety_m <- filter(anxiety, exercise == "Moderate")
-anxiety_h <- filter(anxiety, exercise == "High")
+anxiety_c <- filter(anxiety, group == "Control")
+anxiety_m <- filter(anxiety, group == "Moderate")
+anxiety_h <- filter(anxiety, group == "High")
 # Run normality tests
 shapiro.test(anxiety_c$pre_test)
 shapiro.test(anxiety_m$pre_test)
@@ -85,7 +85,7 @@ shapiro.test(anxiety_h$post_test)
 
 # Descriptives
 descriptives <- anxiety_long %>% 
-  group_by(exercise, time) %>% 
+  group_by(group, time) %>% 
   summarise(
     n = n(),
     mean = mean(score),
@@ -107,14 +107,14 @@ lm(formula = post_test ~ pre_test, data = anxiety_h) %>% summary()
 # Plot
 ggplot(
   data = anxiety, 
-  mapping = aes(x = pre_test, y = post_test, colour = exercise)
+  mapping = aes(x = pre_test, y = post_test, colour = group)
 ) +
   geom_point() +
   geom_smooth(
     method = "lm",
     se = FALSE
   ) +
-  guides(color=guide_legend("Exercise")) +
+  guides(color=guide_legend("group")) +
   labs(
     x = "Pre-test",
     y = "Post-test"
@@ -122,37 +122,37 @@ ggplot(
   
 # ** Homegeneity of regression slopes -------------------------------------
 
-aov(formula = post_test ~ pre_test * exercise, data = anxiety) %>% summary()
+aov(formula = post_test ~ pre_test * group, data = anxiety) %>% summary()
 
 # ** Homogeneity of variance ----------------------------------------------
 
-leveneTest(anxiety$post_test, anxiety$exercise, center = median)
+leveneTest(anxiety$post_test, anxiety$group, center = median)
 
 # ANCOVA ------------------------------------------------------------------
 
 # Run ANCOVA
-ancova <- aov(formula = post_test ~ pre_test + exercise, data = anxiety)
+ancova <- aov(formula = post_test ~ pre_test + group, data = anxiety)
 
 # Get type III sum of squares
 Anova(ancova, type = "III")
 
 # Estimated marginal means
-emmeans(ancova, ~ exercise)
+emmeans(ancova, ~ group)
 
 # Get model coefficients
 summary.lm(ancova)
 
 # Set orthogonal contrasts and re run the model
-contrasts(anxiety$exercise) <- cbind(c(2, -1, -1), c(0, 1, -1))
+contrasts(anxiety$group) <- cbind(c(2, -1, -1), c(0, 1, -1))
 
 # Run ANCOVA
-ancova_2 <- aov(formula = post_test ~ pre_test + exercise, data = anxiety)
+ancova_2 <- aov(formula = post_test ~ pre_test + group, data = anxiety)
 
 # Get type III sum of squares
 Anova(ancova_2, type = "III")
 
 # Estimated marginal means
-emmeans(ancova_2, ~ exercise)
+emmeans(ancova_2, ~ group)
 
 # Get model coefficients
 summary.lm(ancova_2)
@@ -163,8 +163,8 @@ plot(ancova_2, 2) # Q-Q plot
 
 # Post hoc tests ----------------------------------------------------------
 
-pairs(emmeans(ancova_2, ~ exercise), adjust = "Bonferroni")
-pairs(emmeans(ancova_2, ~ exercise), adjust = "Holm")
+pairs(emmeans(ancova_2, ~ group), adjust = "Bonferroni")
+pairs(emmeans(ancova_2, ~ group), adjust = "Holm")
 
 # Plot pre- and post- test scores by group --------------------------------
 
@@ -182,42 +182,42 @@ no_adj_plot_df <- descriptives %>%
 # Plot
 ggplot(data = no_adj_plot_df) +
   geom_point(
-    mapping = aes(x = exercise, y = mean),
+    mapping = aes(x = group, y = mean),
     position = position_dodge(0.3)
   ) +
   geom_line(
-    mapping = aes(x = exercise, y = mean, group = 1)
+    mapping = aes(x = group, y = mean, group = 1)
   ) +
   geom_errorbar(
-    aes(x = exercise, ymin = lower_CI, ymax = upper_CI),
+    aes(x = group, ymin = lower_CI, ymax = upper_CI),
     position = position_dodge(0.3), width = 0.3
   )
 
 # Run an ANOVA to confirm plot
-aov(formula = post_test ~ exercise, data = anxiety) %>% summary()
-pairwise.t.test(anxiety$post_test, anxiety$exercise, p.adjust.method = "bonferroni")
+aov(formula = post_test ~ group, data = anxiety) %>% summary()
+pairwise.t.test(anxiety$post_test, anxiety$group, p.adjust.method = "bonferroni")
 
 # ** Adjusting for baseline -----------------------------------------------
 
 # Build plot dataframe
 # Put estimated marginal means for post-test into a data frame
-emmeans <- emmeans(ancova_2, ~ exercise) %>% as.data.frame()
+emmeans <- emmeans(ancova_2, ~ group) %>% as.data.frame()
 
 # Plot
 ggplot(data = emmeans) +
   geom_point(
-    mapping = aes(x = exercise, y = emmean),
+    mapping = aes(x = group, y = emmean),
     position = position_dodge(0.3)
   ) +
   geom_errorbar(
-    aes(x = exercise, ymin = lower.CL, ymax = upper.CL),
+    aes(x = group, ymin = lower.CL, ymax = upper.CL),
     position = position_dodge(0.3), width = 0.3
   )
 
 # Publication plot --------------------------------------------------------
 
-emmeans$exercise <- recode_factor(
-  emmeans$exercise,
+emmeans$group <- recode_factor(
+  emmeans$group,
   "Control" = "Control Group",
   "Moderate" = "Moderate Exercise Group",
   "High" = "High Exercise Group"
@@ -225,11 +225,11 @@ emmeans$exercise <- recode_factor(
 
 ggplot(data = emmeans) +
   geom_point(
-    mapping = aes(x = exercise, y = emmean),
+    mapping = aes(x = group, y = emmean),
     position = position_dodge(0.3), size = 2.5
   ) +
   geom_errorbar(
-    aes(x = exercise, ymin = lower.CL, ymax = upper.CL),
+    aes(x = group, ymin = lower.CL, ymax = upper.CL),
     position = position_dodge(0.3), width = 0.1, size = 1
   ) +
   scale_y_continuous(
