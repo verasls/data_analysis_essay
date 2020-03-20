@@ -216,12 +216,32 @@ ggplot(data = emmeans) +
 
 # Publication plot --------------------------------------------------------
 
+emmeans$exercise <- recode_factor(
+  emmeans$exercise,
+  "Control" = "Control Group",
+  "Moderate" = "Moderate Exercise Group",
+  "High" = "High Exercise Group"
+)
+
 ggplot(data = emmeans) +
   geom_point(
     mapping = aes(x = exercise, y = emmean),
-    position = position_dodge(0.3), size = 2
+    position = position_dodge(0.3), size = 2.5
   ) +
   geom_errorbar(
     aes(x = exercise, ymin = lower.CL, ymax = upper.CL),
-    position = position_dodge(0.3), width = 0.3
-  )
+    position = position_dodge(0.3), width = 0.1, size = 1
+  ) +
+  scale_y_continuous(
+    limits = c(13, 17),
+    breaks = seq(13, 17, 1),
+    expand = c(0, 0)
+  ) +
+  theme_classic() +
+  theme(
+    axis.title.y = element_text(size = 14),
+    axis.title.x = element_blank(),
+    axis.text.y = element_text(size = 12),
+    axis.text.x = element_text(size = 12)
+  ) +
+  ylab("Anxiety Score")
