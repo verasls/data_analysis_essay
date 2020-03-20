@@ -169,3 +169,33 @@ plot(ancova_2, 2) # Q-Q plot
 
 pairs(emmeans(ancova_2, ~ exercise), adjust = "Bonferroni")
 pairs(emmeans(ancova_2, ~ exercise), adjust = "Holm")
+
+# Plot pre- and post- test scores by group --------------------------------
+
+# ** Without adjusting for baseline ---------------------------------------
+
+# Build plot data frame
+# Get descriptives and compute 95% confidence interval
+no_adj_plot_df <- descriptives %>% 
+  mutate(
+    lower_CI = mean - ((sd / sqrt(n)) * qt(0.975, df = n - 1)),
+    upper_CI = mean + ((sd / sqrt(n)) * qt(0.975, df = n - 1))
+  )
+
+ggplot(data = no_adj_plot_df) +
+  geom_point(
+    mapping = aes(x = time, y = mean, colour = exercise),
+    position = position_dodge(0.3)
+  ) +
+  geom_line(
+    mapping = aes(x = time, y = mean, colour = exercise, group = exercise),
+    position = position_dodge(0.3)
+  ) +
+  geom_errorbar(
+    aes(x = time, ymin = lower_CI, ymax = upper_CI, colour = exercise),
+    position = position_dodge(0.3), width = 0.3
+  )
+
+# Run an ANOVA to confirm plot
+aov(post_test ~ exercise, data = anxiety) %>% summary()
+pairwise.t.test(anxiety$post_test, anxiety$exercise, p.adjust.method = "bonferroni")
