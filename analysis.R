@@ -177,6 +177,7 @@ pairs(emmeans(ancova_2, ~ exercise), adjust = "Holm")
 # Build plot data frame
 # Get descriptives and compute 95% confidence interval
 no_adj_plot_df <- descriptives %>% 
+  filter(time == "Post-test") %>% 
   mutate(
     lower_CI = mean - ((sd / sqrt(n)) * qt(0.975, df = n - 1)),
     upper_CI = mean + ((sd / sqrt(n)) * qt(0.975, df = n - 1))
@@ -185,15 +186,14 @@ no_adj_plot_df <- descriptives %>%
 # Plot
 ggplot(data = no_adj_plot_df) +
   geom_point(
-    mapping = aes(x = time, y = mean, colour = exercise),
+    mapping = aes(x = exercise, y = mean),
     position = position_dodge(0.3)
   ) +
   geom_line(
-    mapping = aes(x = time, y = mean, colour = exercise, group = exercise),
-    position = position_dodge(0.3)
+    mapping = aes(x = exercise, y = mean, group = 1)
   ) +
   geom_errorbar(
-    aes(x = time, ymin = lower_CI, ymax = upper_CI, colour = exercise),
+    aes(x = exercise, ymin = lower_CI, ymax = upper_CI),
     position = position_dodge(0.3), width = 0.3
   )
 
@@ -206,37 +206,17 @@ pairwise.t.test(anxiety$post_test, anxiety$exercise, p.adjust.method = "bonferro
 # Build plot dataframe
 # Put estimated marginal means for post-test into a data frame
 emmeans <- emmeans(ancova_2, ~ exercise) %>% as.data.frame()
-# Drop post-test values from the data frame used in the previous plot and drop n
-# and sd variables
-plot_df <- no_adj_plot_df %>% 
-  filter(time == "Pre-test") %>% 
-  select(-c(n, sd)) %>% 
-  as.data.frame()
-# Make emmeans data frame with the same column names than plot_df
-emmeans <- emmeans %>% 
-  mutate(time = "Post-test") %>% 
-  select(
-    exercise, time,
-    mean = emmean,
-    lower_CI = lower.CL,
-    upper_CI = upper.CL
-  )
-# Bind the two data frames together
-plot_df <- plot_df %>% 
-  rbind(emmeans) %>% 
-  as_tibble()
 
 # Plot
-ggplot(data = plot_df) +
+ggplot(data = emmeans) +
   geom_point(
-    mapping = aes(x = time, y = mean, colour = exercise),
+    mapping = aes(x = exercise, y = emmean),
     position = position_dodge(0.3)
   ) +
   geom_line(
-    mapping = aes(x = time, y = mean, colour = exercise, group = exercise),
-    position = position_dodge(0.3)
+    mapping = aes(x = exercise, y = emmean, group = 1)
   ) +
   geom_errorbar(
-    aes(x = time, ymin = lower_CI, ymax = upper_CI, colour = exercise),
+    aes(x = exercise, ymin = lower.CL, ymax = upper.CL),
     position = position_dodge(0.3), width = 0.3
   )
