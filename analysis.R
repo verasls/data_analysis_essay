@@ -128,10 +128,6 @@ aov(formula = post_test ~ pre_test * exercise, data = anxiety) %>% summary()
 
 leveneTest(anxiety$post_test, anxiety$exercise, center = median)
 
-# ** Independence of the covariate and treatment effect -------------------
-
-aov(formula = pre_test ~ exercise, data = anxiety) %>% summary()
-
 # ANCOVA ------------------------------------------------------------------
 
 # Run ANCOVA
@@ -198,7 +194,7 @@ ggplot(data = no_adj_plot_df) +
   )
 
 # Run an ANOVA to confirm plot
-aov(post_test ~ exercise, data = anxiety) %>% summary()
+aov(formula = post_test ~ exercise, data = anxiety) %>% summary()
 pairwise.t.test(anxiety$post_test, anxiety$exercise, p.adjust.method = "bonferroni")
 
 # ** Adjusting for baseline -----------------------------------------------
@@ -213,8 +209,17 @@ ggplot(data = emmeans) +
     mapping = aes(x = exercise, y = emmean),
     position = position_dodge(0.3)
   ) +
-  geom_line(
-    mapping = aes(x = exercise, y = emmean, group = 1)
+  geom_errorbar(
+    aes(x = exercise, ymin = lower.CL, ymax = upper.CL),
+    position = position_dodge(0.3), width = 0.3
+  )
+
+# Publication plot --------------------------------------------------------
+
+ggplot(data = emmeans) +
+  geom_point(
+    mapping = aes(x = exercise, y = emmean),
+    position = position_dodge(0.3), size = 2
   ) +
   geom_errorbar(
     aes(x = exercise, ymin = lower.CL, ymax = upper.CL),
