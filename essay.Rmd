@@ -10,10 +10,12 @@ output:
     citation_package: biblatex
 bibliography: bibliography.bib
 biblio-style: apa
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 ```
 
 # Performing an ANCOVA using R
@@ -33,7 +35,7 @@ Execute these commands to install the packages:
 
 \vspace{0.5em}
 
-```{r install_packs, eval=FALSE}
+```{r install-packs, eval=FALSE}
 install.packages("tidyverse")
 install.packages("car")
 install.packages("emmeans")
@@ -45,19 +47,19 @@ And then, these commands to load the packages into your R session.
 
 \vspace{0.5em}
 
-```{r load_packs, message=FALSE}
+```{r load-packs, message=FALSE}
 library(tidyverse)
 library(car)
 library(emmeans)
 ```
 
-## Entering data
+## Entering the data
 
 For this tutorial, we will be using the `anxiety` dataset contained in the `datarium` package. As describe by the package manual, this data contains 45 individuals (`id` variable), divided into three groups (`group` variable), and their measured anxiety score at three time points (`t1`, `t2`, and `t3` variables). These data can be load and displayed with the following commands:
 
 \vspace{0.5em}
 
-```{r read_data}
+```{r read-data}
 data("anxiety", package = "datarium")
 anxiety %>% print(n = Inf)
 ```
@@ -68,7 +70,7 @@ In the subsequent analysis, we will only need the anxiety scores from the first 
 
 \vspace{0.5em}
 
-```{r clean_data}
+```{r clean-data}
 # Select and rename variables
 anxiety <- anxiety %>% 
   as_tibble() %>% 
@@ -89,7 +91,7 @@ And the data frame can, then, be inspected:
 
 \vspace{0.5em}
 
-```{r show_data}
+```{r show-data}
 anxiety
 ```
 
@@ -99,7 +101,7 @@ The data, until now, is in wide format, with multiple observations of a same ind
 
 \vspace{0.5em}
 
-```{r reshape_data}
+```{r reshape-data}
 # Reshape data
 anxiety_long <- anxiety %>% 
   pivot_longer(
@@ -119,13 +121,13 @@ anxiety_long$time <- recode_factor(
 anxiety_long
 ```
 
-## Exploring data
+## Exploring the data
 
 First, lets explore the data with some plots. We can generate boxplots for the three groups and two time points:
 
 \vspace{0.5em}
 
-```{r boxplot, fig.pos="H", out.extra="", fig.cap="Boxplot of anxiety score separated by group (Control, Moderate and High) and time (Pre-test and Post-test)"}
+```{r boxplot, fig.pos="H", out.extra="", fig.cap="Boxplot of anxiety score separated by group (Control, Moderate and High) and time (Pre-test and Post-test)."}
 ggplot(data = anxiety_long, mapping = aes(x = group, y = score)) +
   geom_boxplot() +
   geom_dotplot(
@@ -142,3 +144,122 @@ ggplot(data = anxiety_long, mapping = aes(x = group, y = score)) +
 \vspace{0.5em}
 
 As can be observed in the Figure \@ref(fig:boxplot) boxplots, pre-test anxiety score values are roughly equal among groups, while the post-test scores tend to be lower for the moderate, but mainly for the high intensty group, compared to the control. This indicates that there is at least a tendency to the exercise to decrease an individual`s anxiety level, and exercise intensity may play a role in it. Also, there is no clear difference in the spread of the scores among groups both time points.
+
+Another useful plot to make is the histogram, as we need to verify whether the pre- and post-test scores are normally distributed in all of the groups [@Rutherford_2011]. We can plot a frequency histogram by executing the following code:
+
+\vspace{0.5em}
+
+```{r histogram-test, fig.pos="H", out.extra="", fig.cap="Histogram of the pre-test scores separated by group, without manual adjustment of the bin widths."}
+ggplot(data = anxiety, mapping = aes(pre_test)) +
+  geom_histogram() +
+  facet_wrap(~group) +
+  labs(x = "Pre-test", y = "")
+```
+
+\vspace{0.5em}
+
+The resulting plot in Figure \@ref(fig:histogram-test) is not very illustrative of the data. A way to improve it would be to manually adjust the histogram bin width. The Freedman-Diaconis rule [@Freedman_1981] can be used to select the best width, and it is shown in Equation \@ref(eq:freedman).
+
+\begin{equation}
+  bin\ width = 2\frac{IQR(x)}{n^\frac{1}{3}}
+  (\#eq:freedman)
+\end{equation}
+
+This rule can be written as a function in R, to be applied to the histograms.
+
+\vspace{0.5em}
+
+```{r bin-width}
+bin_width <- function(variable) {
+  bw <- 2 * IQR(variable) / length(variable)^(1/3)
+  return(bw)
+}
+```
+
+```{r histogram-pre, fig.pos="H", out.extra="", fig.cap="Histogram of the pre-test scores separated by group."}
+ggplot(data = anxiety, mapping = aes(pre_test)) +
+  geom_histogram(binwidth = bin_width(anxiety$pre_test)) +
+  facet_wrap(~group) +
+  labs(x = "Pre-test", y = "")
+```
+
+```{r histogram-post, fig.pos="H", out.extra="", fig.cap="Histogram of the post-test scores separated by group."}
+ggplot(data = anxiety, mapping = aes(post_test)) +
+  geom_histogram(binwidth = bin_width(anxiety$post_test)) +
+  facet_wrap(~group) +
+  labs(x = "Pre-test", y = "")
+```
+
+\vspace{0.5em}
+
+By the inspection of the histograms in Figures \@ref(fig:histogram-pre) and \@ref(fig:histogram-post) we can notice that the data distribution is aproximately normal. To assure that, however, a normality test is needed. Prior to running the normality tests, we need to separate the original data frame into three, one for each group:
+
+\vspace{0.5em}
+
+```{r separate-groups}
+# Separate the groups into 3 different data frames
+anxiety_c <- filter(anxiety, group == "Control")
+anxiety_m <- filter(anxiety, group == "Moderate")
+anxiety_h <- filter(anxiety, group == "High")
+```
+
+\vspace{0.5em}
+
+Now we can use the `shapiro.test()` function to perform the Shapiro-Wilk Normality Test in the pre-test scores of each of the groups:
+
+\vspace{0.5em}
+
+```{r normality-pre, results="hide"}
+shapiro.test(anxiety_c$pre_test)
+shapiro.test(anxiety_m$pre_test)
+shapiro.test(anxiety_h$pre_test)
+```
+
+```{r normality-pre-results, echo=FALSE}
+shapiro.test(anxiety_c$pre_test)
+shapiro.test(anxiety_m$pre_test)
+shapiro.test(anxiety_h$pre_test)
+```
+
+\vspace{0.5em}
+
+And in the post-test scores:
+
+\vspace{0.5em}
+
+```{r normality-post, results="hide"}
+shapiro.test(anxiety_c$post_test)
+shapiro.test(anxiety_m$post_test)
+shapiro.test(anxiety_h$post_test)
+```
+
+```{r normality-post-results, echo=FALSE}
+shapiro.test(anxiety_c$post_test)
+shapiro.test(anxiety_m$post_test)
+shapiro.test(anxiety_h$post_test)
+```
+
+\vspace{0.5em}
+
+As all *p* values were > 0.05, we can assume that both pre- and post-test scores of all groups had a normal distribution.
+
+Finally, some descriptive statistics can be calculated, such as the sample size, mean and standard deviation of the scores:
+
+\vspace{0.5em}
+
+```{r descriptives}
+descriptives <- anxiety_long %>% 
+  group_by(group, time) %>% 
+  summarise(
+    n = n(),
+    mean = mean(score),
+    sd = sd(score)
+  )
+descriptives %>% as.data.frame()
+```
+
+\vspace{0.5em}
+
+## Checking the assumptions
+
+\pagebreak
