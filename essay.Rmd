@@ -127,7 +127,7 @@ First, lets explore the data with some plots. We can generate boxplots for the t
 
 \vspace{0.5em}
 
-```{r boxplot, fig.pos="H", out.extra="", fig.cap="Boxplot of anxiety score separated by group (Control, Moderate and High) and time (Pre-test and Post-test)."}
+```{r boxplot, fig.pos="H", out.extra="", out.width="75%", fig.align="center", fig.cap="Boxplot of anxiety score separated by group (Control, Moderate and High) and time (Pre-test and Post-test)."}
 ggplot(data = anxiety_long, mapping = aes(x = group, y = score)) +
   geom_boxplot() +
   geom_dotplot(
@@ -149,7 +149,7 @@ Another useful plot to make is the histogram, as we need to verify whether the p
 
 \vspace{0.5em}
 
-```{r histogram-test, fig.pos="H", out.extra="", fig.cap="Histogram of the pre-test scores separated by group, without manual adjustment of the bin widths."}
+```{r histogram-test, fig.pos="H", out.extra="", out.width="75%", fig.align="center", fig.cap="Histogram of the pre-test scores separated by group, without manual adjustment of the bin widths."}
 ggplot(data = anxiety, mapping = aes(pre_test)) +
   geom_histogram() +
   facet_wrap(~group) +
@@ -176,14 +176,14 @@ bin_width <- function(variable) {
 }
 ```
 
-```{r histogram-pre, fig.pos="H", out.extra="", fig.cap="Histogram of the pre-test scores separated by group."}
+```{r histogram-pre, fig.pos="H", out.extra="", out.width="75%", fig.align="center", fig.cap="Histogram of the pre-test scores separated by group."}
 ggplot(data = anxiety, mapping = aes(pre_test)) +
   geom_histogram(binwidth = bin_width(anxiety$pre_test)) +
   facet_wrap(~group) +
   labs(x = "Pre-test", y = "")
 ```
 
-```{r histogram-post, fig.pos="H", out.extra="", fig.cap="Histogram of the post-test scores separated by group."}
+```{r histogram-post, fig.pos="H", out.extra="", out.width="75%", fig.align="center", fig.cap="Histogram of the post-test scores separated by group."}
 ggplot(data = anxiety, mapping = aes(post_test)) +
   geom_histogram(binwidth = bin_width(anxiety$post_test)) +
   facet_wrap(~group) +
