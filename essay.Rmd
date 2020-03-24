@@ -263,4 +263,47 @@ descriptives %>% as.data.frame()
 
 ## Checking the assumptions
 
+### Linearity between the covariate and the outcome variable
+
+In order to check this assumption, we need to build linear regression models using data from each group separately (`anxiety_c`, `anxiety_m` and `anxiety_h` data frames used previously). The models will have the post-test scores as outcome variable and the pre-test scores as predictor. This assumption will be met if the pre-test coefficients in the models are statistically significant (*p* < 0.05). Code to build the linear regression models and their results is shown below:
+
+\vspace{0.5em}
+
+```{r lm, results="hide"}
+lm(formula = post_test ~ pre_test, data = anxiety_c) %>% summary()
+lm(formula = post_test ~ pre_test, data = anxiety_m) %>% summary()
+lm(formula = post_test ~ pre_test, data = anxiety_h) %>% summary()
+```
+
+```{r lm-results, echo=FALSE}
+lm(formula = post_test ~ pre_test, data = anxiety_c) %>% summary()
+lm(formula = post_test ~ pre_test, data = anxiety_m) %>% summary()
+lm(formula = post_test ~ pre_test, data = anxiety_h) %>% summary()
+```
+
+\vspace{0.5em}
+
+The results show that for each of the groups, there is a significant (*p* < 0.001) linear relationship between the covariate and the outcome variable. This relationship can be also shown in a scatterplot of the pre-test scores in the X axis and the post-test scores in the Y axis, with the linear regression lines for each group:
+
+\vspace{0.5em}
+
+```{r lm-plot, fig.pos="H", out.extra="", out.width="75%", fig.align="center", fig.cap="Scatterplot of pre-test X post-test scores, with linear regression lines. Groups (Control, Moderate and High) are distinguished by different point and line colors."}
+ggplot(
+  data = anxiety, 
+  mapping = aes(x = pre_test, y = post_test, colour = group)
+) +
+  geom_point() +
+  geom_smooth(
+    method = "lm",
+    se = FALSE
+  ) +
+  guides(color=guide_legend("group")) +
+  labs(
+    x = "Pre-test",
+    y = "Post-test"
+  )
+```
+
+\vspace{0.5em}
+
 \pagebreak
