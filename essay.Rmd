@@ -2,8 +2,8 @@
 output:
   bookdown::pdf_document2:
     highlight: tango
+    toc: false
     number_sections: yes
-    toc_depth: 2
     includes:
       in_header: preamble.tex
       before_body: title.tex
