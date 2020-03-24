@@ -58,14 +58,15 @@ bin_width <- function(variable) {
   bw <- 2 * IQR(variable) / length(variable)^(1/3)
   return(bw)
 }
-
+# Pre-test
 ggplot(data = anxiety, mapping = aes(pre_test)) +
   geom_histogram(binwidth = bin_width(anxiety$pre_test)) +
   facet_wrap(~group) +
   labs(x = "Pre-test", y = "")
-
+# Post-test
 ggplot(data = anxiety, mapping = aes(post_test)) +
   geom_histogram(binwidth = bin_width(anxiety$post_test)) +
+  scale_x_continuous(breaks = seq(11, 21, 2)) +
   facet_wrap(~group) +
   labs(x = "Post-test", y = "")
 
