@@ -7,3 +7,6 @@
 # File types
 *.pdf
 *.log
+
+# Folders
+essay_cache/
