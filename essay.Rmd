@@ -186,6 +186,7 @@ ggplot(data = anxiety, mapping = aes(pre_test)) +
 ```{r histogram-post, fig.pos="H", out.extra="", out.width="75%", fig.align="center", fig.cap="Histogram of the post-test scores separated by group."}
 ggplot(data = anxiety, mapping = aes(post_test)) +
   geom_histogram(binwidth = bin_width(anxiety$post_test)) +
+  scale_x_continuous(breaks = seq(11, 21, 2)) +
   facet_wrap(~group) +
   labs(x = "Pre-test", y = "")
 ```
