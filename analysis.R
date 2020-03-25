@@ -131,7 +131,7 @@ leveneTest(anxiety$post_test, anxiety$group, center = median)
 
 # ** Independence of the covariate and treatment effect -------------------
 
-aov(formula = pre_test ~ exercise, data = anxiety) %>% summary()
+aov(formula = pre_test ~ group, data = anxiety) %>% summary()
 
 # ANCOVA ------------------------------------------------------------------
 
