@@ -66,7 +66,7 @@ anxiety %>% print(n = Inf)
 
 \vspace{0.5em}
 
-In the subsequent analysis, we will only need the anxiety scores from the first and last names. Therefore, we will select only these colums and change the varible names to `pre_test` and `post_test`, respectively. Also, we can rename the levels of the `group` variable to facilitate the interpretation: `grp1` will be renamed to `Control`, `grp2` to `Moderate`, and `grp3` to `High`, referring to the control group, and moderate and high intensity exercise groups, respectively. These changes can be done executing:
+In the subsequent analysis, we will only need the anxiety scores from the first and last time points. Therefore, we will select only these colums and change the varible names to `pre_test` and `post_test`, respectively. Also, we can rename the levels of the `group` variable to facilitate the interpretation: `grp1` will be renamed to `Control`, `grp2` to `Moderate`, and `grp3` to `High`, referring to the control group, and moderate and high intensity exercise groups, respectively. These changes can be done executing:
 
 \vspace{0.5em}
 
@@ -120,6 +120,8 @@ anxiety_long$time <- recode_factor(
 
 anxiety_long
 ```
+
+\vspace{0.5em}
 
 ## Exploring the data
 
@@ -283,7 +285,7 @@ lm(formula = post_test ~ pre_test, data = anxiety_h) %>% summary()
 
 \vspace{0.5em}
 
-The results show that for each of the groups, there is a significant (*p* < 0.001) linear relationship between the covariate and the outcome variable. This relationship can be also shown in a scatterplot of the pre-test scores in the X axis and the post-test scores in the Y axis, with the linear regression lines for each group:
+The coefficients *p* value can be found in the `Pr(>|t|)` column of the output. In this case, as the *p* values were very small, they are written in scientific notation. For example, on the first case (linear regression for the control group), the *p* value shown is `6.8e-08`, meaning $6.8 \times 10^{-08}$, which equals to 0.000000068. The results show that for each of the groups, there is a significant (*p* < 0.001) linear relationship between the covariate and the outcome variable. This relationship can be also shown in a scatterplot of the pre-test scores in the X axis and the post-test scores in the Y axis, with the linear regression lines for each group:
 
 \vspace{0.5em}
 
@@ -305,5 +307,47 @@ ggplot(
 ```
 
 \vspace{0.5em}
+
+### Homegeneity of regression slopes
+
+The first step to check this assumption would be to inspect the scatterplot with the regression lines in Figure \@ref(fig:lm-plot). If there is an homogeneity of regression slopes, then, the linear regression line of the three groups should be parallel. By looking at the plot, we can see that the lines are not exactly parallel, but have fairly similar slopes. An statistical test to confirm that is to build an ANOVA model with the post-test score as the outcome variable and the interaction term between the covariate and the treatment as the predictor. If this interaction efffect is not statistically significant, we can assume that the regression slopes are homogeneous.
+
+\vspace{0.5em}
+
+```{r hos}
+aov(formula = post_test ~ pre_test * group, data = anxiety) %>% summary()
+```
+
+\vspace{0.5em}
+
+In the output above, by looking at the line regarding the interaction term (`pre_test:group`), we can see that it is not statistically significant, as the *p* value (at the `Pr(> F)` column) is > 0.05.
+
+### Homogeneity of variance
+
+With this assumption, we want to check if the variance of the outcome variable (post-test scores) is constant across groups. This can be done by executing a Levene's test, which tests the null hypothesis that the variances in different groups are equal. In R, this test can be done by the `leveneTest()` function:
+
+\vspace{0.5em}
+
+```{r levene}
+leveneTest(anxiety$post_test, anxiety$group, center = median)
+```
+
+\vspace{0.5em}
+
+As the *p* value (`Pr(>F)` column) is > 0.05, we assume that the null hypothesis is correct and that the variances are equal across the groups.
+
+### Independence of the covariate and treatment effect
+
+To check this assumption, simply perform an ANOVA to test whether the experimental groups (control, medium and high) differ on the covariate (pre-test scores).
+
+\vspace{0.5em}
+
+```{r ind-cov-treat}
+aov(formula = pre_test ~ group, data = anxiety) %>% summary()
+```
+
+\vspace{0.5em}
+
+We can see that the *p* value (`Pr(>F)` column) is > 0.05. Therefore, we conclude that the covariate does not depend on the treatment effect.
 
 \pagebreak
