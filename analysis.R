@@ -84,6 +84,9 @@ shapiro.test(anxiety_c$post_test)
 shapiro.test(anxiety_m$post_test)
 shapiro.test(anxiety_h$post_test)
 
+# Levene's test
+leveneTest(anxiety$post_test, anxiety$group, center = median)
+
 # Descriptives
 descriptives <- anxiety_long %>% 
   group_by(group, time) %>% 
@@ -95,6 +98,10 @@ descriptives <- anxiety_long %>%
 descriptives %>% as.data.frame()
 
 # Check assumptions -------------------------------------------------------
+
+# ** Independence of the covariate and treatment effect -------------------
+
+aov(formula = pre_test ~ group, data = anxiety) %>% summary()
 
 # ** Linearity between the covariate and the outcome variable -------------
 
@@ -124,14 +131,6 @@ ggplot(
 # ** Homegeneity of regression slopes -------------------------------------
 
 aov(formula = post_test ~ pre_test * group, data = anxiety) %>% summary()
-
-# ** Homogeneity of variance ----------------------------------------------
-
-leveneTest(anxiety$post_test, anxiety$group, center = median)
-
-# ** Independence of the covariate and treatment effect -------------------
-
-aov(formula = pre_test ~ group, data = anxiety) %>% summary()
 
 # ANCOVA ------------------------------------------------------------------
 
