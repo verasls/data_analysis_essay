@@ -147,7 +147,7 @@ ggplot(data = anxiety_long, mapping = aes(x = group, y = score)) +
 
 As can be observed in the Figure \@ref(fig:boxplot) boxplots, pre-test anxiety score values are roughly equal among groups, while the post-test scores tend to be lower for the moderate, but mainly for the high intensty group, compared to the control. This indicates that there is at least a tendency to the exercise to decrease an individual`s anxiety level, and exercise intensity may play a role in it. Also, there is no clear difference in the spread of the scores among groups both time points.
 
-Another useful plot to make is the histogram, as we need to verify whether the pre- and post-test scores are normally distributed in all of the groups [@Rutherford_2011]. We can plot a frequency histogram by executing the following code:
+Another useful plot to make is the histogram, as we need to verify whether the pre- and post-test scores are normally distributed in all of the groups [@Rutherford_2011], which is an assumption of parametric tests, such as the ANCOVA. We can plot a frequency histogram by executing the following code:
 
 \vspace{0.5em}
 
@@ -246,6 +246,18 @@ shapiro.test(anxiety_h$post_test)
 
 As all *p* values were > 0.05, we can assume that both pre- and post-test scores of all groups had a normal distribution.
 
+Then, another assumption of the parametric tests needs to be checked, which is the homogeneity of the variances [@Rutherford_2011; @Field_2012]. We can check if the variance of the outcome variable (post-test scores) is constant across groups by executing a Levene's test, which tests the null hypothesis that the variances in different groups are equal. In R, this test can be done by the `leveneTest()` function:
+
+\vspace{0.5em}
+
+```{r levene}
+leveneTest(anxiety$post_test, anxiety$group, center = median)
+```
+
+\vspace{0.5em}
+
+As the *p* value (located in the `Pr(>F)` column) is > 0.05, we assume that the null hypothesis is correct and that the variances are equal across the groups.
+
 Finally, some descriptive statistics can be calculated, such as the sample size, mean and standard deviation of the scores:
 
 \vspace{0.5em}
@@ -264,6 +276,24 @@ descriptives %>% as.data.frame()
 \vspace{0.5em}
 
 ## Checking the assumptions
+
+### Assumptions of parametric tests
+
+The main assumptions of the parametric tests, which are the normality of data distribution and the homogeneity of variances have already been checked in the previous section.
+
+### Independence of the covariate and treatment effect
+
+To check this assumption, simply perform an ANOVA to test whether the experimental groups (control, medium and high) differ on the covariate (pre-test scores).
+
+\vspace{0.5em}
+
+```{r ind-cov-treat}
+aov(formula = pre_test ~ group, data = anxiety) %>% summary()
+```
+
+\vspace{0.5em}
+
+We can see that the *p* value (`Pr(>F)` column) is > 0.05. Therefore, we conclude that the covariate does not depend on the treatment effect.
 
 ### Linearity between the covariate and the outcome variable
 
@@ -321,33 +351,5 @@ aov(formula = post_test ~ pre_test * group, data = anxiety) %>% summary()
 \vspace{0.5em}
 
 In the output above, by looking at the line regarding the interaction term (`pre_test:group`), we can see that it is not statistically significant, as the *p* value (at the `Pr(> F)` column) is > 0.05.
-
-### Homogeneity of variance
-
-With this assumption, we want to check if the variance of the outcome variable (post-test scores) is constant across groups. This can be done by executing a Levene's test, which tests the null hypothesis that the variances in different groups are equal. In R, this test can be done by the `leveneTest()` function:
-
-\vspace{0.5em}
-
-```{r levene}
-leveneTest(anxiety$post_test, anxiety$group, center = median)
-```
-
-\vspace{0.5em}
-
-As the *p* value (`Pr(>F)` column) is > 0.05, we assume that the null hypothesis is correct and that the variances are equal across the groups.
-
-### Independence of the covariate and treatment effect
-
-To check this assumption, simply perform an ANOVA to test whether the experimental groups (control, medium and high) differ on the covariate (pre-test scores).
-
-\vspace{0.5em}
-
-```{r ind-cov-treat}
-aov(formula = pre_test ~ group, data = anxiety) %>% summary()
-```
-
-\vspace{0.5em}
-
-We can see that the *p* value (`Pr(>F)` column) is > 0.05. Therefore, we conclude that the covariate does not depend on the treatment effect.
 
 \pagebreak
