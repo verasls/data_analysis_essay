@@ -352,4 +352,56 @@ aov(formula = post_test ~ pre_test * group, data = anxiety) %>% summary()
 
 In the output above, by looking at the line regarding the interaction term (`pre_test:group`), we can see that it is not statistically significant, as the *p* value (at the `Pr(> F)` column) is > 0.05.
 
+## The ANCOVA model in R
+
+### Fitting the model 
+
+To fit the ANCOVA model we can use the `aov()` function:
+
+\vspace{0.5em}
+
+```{r ancova-1}
+ancova <- aov(formula = post_test ~ pre_test + group, data = anxiety)
+```
+
+\vspace{0.5em}
+
+This model has the post-test scores as outcome variable, the pre-test scores as covariate and the group variable as independent variable.
+
+### Interpreting the results
+
+To see the model results, we can use the `Anova()` function, specifying the Type III sum of squares:
+
+\vspace{0.5em}
+
+```{r anova-table1}
+Anova(ancova, type = "III")
+```
+
+\vspace{0.5em}
+
+By looking at the *p* values (`Pr(>F)` column), we can see that the covariate  significantly predicts the pos-test scores (`pre_test` *p* < 0.001), and that, when removing the effect of the covariate, there is a significant treatment effect (`group` *p* < 0.001). We can, then, look at the descriptive statistics for the post-test scores among groups:
+
+\vspace{0.5em}
+
+```{r descriptvies-post}
+descriptives %>% 
+  filter(time == "Post-test") %>% 
+  as.data.frame()
+```
+
+\vspace{0.5em}
+
+According to the ANCOVA results, we can assume that these means are statistically different, although we still cannot say among which groups these differences lies. But, actually, these means have not been adjusted for the covariate, they are the original means. To obtain the adjusted means (also called estimated marginal means or least squares means), we can use the `emmeans()` function:
+
+\vspace{0.5em}
+
+```{r emmeans-1}
+emmeans(ancova, ~ group)
+```
+
+\vspace{0.5em}
+
+### Interpreting the contrasts
+
 \pagebreak
