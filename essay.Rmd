@@ -380,11 +380,11 @@ Anova(ancova, type = "III")
 
 \vspace{0.5em}
 
-By looking at the *p* values (`Pr(>F)` column), we can see that the covariate  significantly predicts the pos-test scores (`pre_test` *p* < 0.001), and that, when removing the effect of the covariate, there is a significant treatment effect (`group` *p* < 0.001). We can, then, look at the descriptive statistics for the post-test scores among groups:
+By looking at the *p* values (`Pr(>F)` column), we can see that the covariate  significantly influences the post-test scores (`pre_test` *p* < 0.001), and that, when removing the effect of the covariate, there is a significant treatment effect (`group` *p* < 0.001). We can, then, look at the descriptive statistics for the post-test scores among groups:
 
 \vspace{0.5em}
 
-```{r descriptvies-post}
+```{r descriptives-post}
 descriptives %>% 
   filter(time == "Post-test") %>% 
   as.data.frame()
@@ -392,7 +392,7 @@ descriptives %>%
 
 \vspace{0.5em}
 
-According to the ANCOVA results, we can assume that these means are statistically different, although we still cannot say among which groups these differences lies. But, actually, these means have not been adjusted for the covariate, they are the original means. To obtain the adjusted means (also called estimated marginal means or least squares means), we can use the `emmeans()` function:
+According to the ANCOVA results, we can assume that these means are statistically different, although we still cannot say among which groups these differences lie. But, actually, these means have not been adjusted for the covariate, they are the original means. To obtain the adjusted means (also called estimated marginal means or least squares means), we can use the `emmeans()` function:
 
 \vspace{0.5em}
 
@@ -402,6 +402,135 @@ emmeans(ancova, ~ group)
 
 \vspace{0.5em}
 
+We can see that these means are slightly different from the original means, as, within each group, they were adjusted for the pre-test scores. Knowing this, we can now move to further analyse which groups differ. There are two ways we can accomplish that: using planned contrasts and using *post hoc* tests.
+
 ### Interpreting the contrasts
+
+As the ANCOVA is part of the GLM, the calculations behind it are the same as for a linear regression. Therefore, for categorical variables, such as the `group` variable, we need to recode it into dummy variables, which are categorical variables with two numeric codes: 0 for one group, and 1 for the other. In our case, with three groups, two dummy variables are needed. R automatically does it, and we can inspect these contrasts using the `contrasts()` function:
+
+\vspace{0.5em}
+
+```{r dummy-contrasts}
+contrasts(anxiety$group)
+```
+
+\vspace{0.5em}
+
+The control group was assumed to be a base category and was always coded as 0. The first contrast (`Moderate`), compares the moderate group with the control group, and the second contrast (`High`), compares the high group with the control group. The general representation of a linear model with three predictors, such as the ANCOVA we fitted, is:
+
+\begin{equation}
+  Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \beta_3X_3
+  (\#eq:glm1)
+\end{equation}
+
+And, to more closely represent our ANCOVA:
+
+\begin{equation}
+  post\_test = \beta_0 + \beta_1pre\_test + \beta_2groupModerate +
+  \beta_3groupHigh
+  (\#eq:ancova1)
+\end{equation}
+
+Replacing the dummy variables contrasts for the moderate group, for example:
+
+\begin{equation}
+  post\_test = \beta_0 + \beta_1pre\_test + \beta_2 \times 1 + \beta_3 \times 0
+  (\#eq:ancova2)
+\end{equation}
+
+We can now ask for the coefficients for the ANCOVA model we built:
+
+\vspace{0.5em}
+
+```{r model-coeffs-1}
+summary.lm(ancova)
+```
+
+\vspace{0.5em}
+
+The `groupModerate` coefficient is related to de `Moderate` dummy variable. Therefore, it compares the control group with the moderate group, and its *p* value (in the `Pr(>|t|)` column) indicates whether or not the difference between these two groups is statistically significant. The same applies to the `groupHigh` coefficient, which indicates the regression coefficient for the comparison between the control group and high group, and its *p* values indicates the significance level for the comparison. As both coefficients *p* value were < 0.05, we can conclude that the control group post-test score is significantly different than the moderate and the high group scores, adjusted for the pre-test.
+
+Also, if we substitute the coefficients found for the model in the Equation \@ref(eq:ancova2):
+
+\begin{align}
+  post\_test_{moderate} &= - 0.35347 + 0.98674 \times \left(\frac{17.08667 + 16.64667 + 17.01333}{3}\right) \\
+  &\quad - 0.54583 \times 1 - 2.87431 \times 0 \nonumber \\
+  &= - 0.35347 + 0.98674 \times 16.91556 - 0.54583 \nonumber \\
+  &= 15.79199 \nonumber
+\end{align}
+
+The result is the adjusted post-test mean for the moderate group.
+
+\vspace{0.5em}
+
+As we have seen, this type of dummy contrast is default in R, but we can still specify the contrasts by ourselves to test some specific hypothesis we may have *a priori*. One way of doing this is to set orthogonal contrasts, in which the sum of the coefficients for each contrast equals to 0 [@Field_2012]. A common choice of contrasts to do in a study design like this, is to use the first contrast to compare the control group with the two experimental conditions, and the second contrast to compare between the two expetimental conditions. Table \@ref(tab:tab-contrast) shows an example of such contrasts.
+
+\begin{table}[H] \centering 
+\caption[]{Orthogonal contrasts for the anxiety data \label{tab:tab-contrast}}
+\begin{tabular}{lrrr}
+\hline
+Group    & Contrast 1 & Contrast 2 & Product \\
+\hline
+Control  & 2          & 0          & 0       \\
+Moderate & - 1        & 1          & - 1     \\
+High     & - 1        & - 1        & 1       \\
+\hline
+Total    & 0          & 0          & 0       \\  
+\hline
+\end{tabular}
+\end{table}
+
+We can see in Table \@ref(tab:tab-contrast) that the sum of each contrast coefficients is 0. Also the sum of the coeffients products also equals to 0, therefore we can conclude that these contrasts are orthogonal. Examining the Contrast 1, it shows that the control group has a weight of 2, as it is being compared against the means of two other groups, and the moderate and high groups have the same weight and a different sign than the control. For the Contrast 2, the weight of the control group is 0, as it was already singled out in the Contrast 1, and the moderate and high groups have the same weight, but with different signs, as they now are being compared with one another.
+
+These contrasts can be establishd in R by the following command:
+
+\vspace{0.5em}
+
+```{r planned-contrasts}
+contrasts(anxiety$group) <- cbind(c(2, -1, -1), c(0, 1, -1))
+contrasts(anxiety$group)
+```
+
+\vspace{0.5em}
+
+Now, we will rerun the ANCOVA model, with the same formula as we did the last time, the only difference being the contrasts, and ask for the model results and the adjusted means:
+
+```{r ancova-2}
+ancova_2 <- aov(formula = post_test ~ pre_test + group, data = anxiety)
+Anova(ancova_2, type = "III")
+
+emmeans(ancova_2, ~ group)
+```
+
+By inspecting these results, we can see that they are the same than for the first model, which was expected, as the data did not change. The only difference that can be observed is in the sum of squares for the intercept. That happens because all linear model coefficients have changed, reflecting the new coding for the `group` variable, as we can see:
+
+\vspace{0.5em}
+
+```{r model-coeffs-2}
+summary.lm(ancova_2)
+```
+
+\vspace{0.5em}
+
+Now, the `group1` coefficient reflects the Contrast 1, which is the comparison between the control group and the moderate and high groups. It accomplishes it by comparing the adjusted mean of the control group with the average of the adjusted means of the moderate and high groups:
+
+\begin{align}\label{eq:beta1}
+  \beta_{group1} &= \bar{X}_{control} - \left(\frac{\bar{X}_{moderate} + \bar{X}_{high}}{2}\right) \\
+  &= 16.33782 - \left(\frac{15.79199 + 13.46352}{2}\right) \nonumber \\
+  &= 1.71007 \nonumber
+\end{align}
+
+Looking at the results for the Equation \@ref(eq:beta1), we would assume that the coefficient for the Contrast 1 is 1.71007, which is not true. This value still gets divided by the number of groups in the contrast, 3 in this case, to control for the inflated familywise error. Therefore, $\beta_{group1} = \frac{1.71007}{2} = 0.57002$, the same as shown in the output above. Furthermore, the *p* value for this coefficient (`Pr(>|t|)` column) is < 0.05, which indicates that the control group adjusted mean is significantly different than the means for the moderate and high groups.
+
+The `group2` coefficient is related to the Contrast 2, which compares the moderate and high groups. Repeting the same process shown in Equation \@ref(eq:beta1) we get:
+
+\begin{align}\label{eq:beta2}
+  \beta_{group2} &= \bar{X}_{moderate} - \bar{X}_{high} \\
+  &= 15.79199 - 13.46352 \nonumber \\
+  &= 2.32847 \nonumber
+\end{align}
+
+Then, dividing this value by 2, which is the number of groups involved in the contrast, we have $\beta_{group2} = 2.32847 = 1.16424$, the same as seen in the output. The *p* value for this coefficient is also < 0.05, indicating that the difference in the adjusted means of the moderate and high groups is statistically significant.
+
 
 \pagebreak
