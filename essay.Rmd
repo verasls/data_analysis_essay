@@ -532,5 +532,26 @@ The `group2` coefficient is related to the Contrast 2, which compares the modera
 
 Then, dividing this value by 2, which is the number of groups involved in the contrast, we have $\beta_{group2} = 2.32847 = 1.16424$, the same as seen in the output. The *p* value for this coefficient is also < 0.05, indicating that the difference in the adjusted means of the moderate and high groups is statistically significant.
 
+### *Post hoc* tests
+
+*Post hoc* tests are parwise comparisons that compare all possible combinations of groups. It is like performing a *t*-test on each pair of groups, but applying an adjustment to the *p* value to control for the inflated familywise error. In an ANCOVA, we must use the adjusted means in the *post hoc* tests. In R, we can use the `pairs()` function, and select the adjusted means for comparison (*e.g.*: `emmeans(ancova_2, ~ group)`) and then choose the adjustment method with the `adjust` argument. Below we can see the *post hoc* test with three of the most common adjustments.
+
+\vspace{0.5em}
+
+```{r post-hocs, results="hide"}
+pairs(emmeans(ancova_2, ~ group), adjust = "Bonferroni")
+pairs(emmeans(ancova_2, ~ group), adjust = "Holm")
+pairs(emmeans(ancova_2, ~ group), adjust = "Tukey")
+```
+
+```{r post-hocs-results, echo=FALSE}
+pairs(emmeans(ancova_2, ~ group), adjust = "Bonferroni")
+pairs(emmeans(ancova_2, ~ group), adjust = "Holm")
+pairs(emmeans(ancova_2, ~ group), adjust = "Tukey")
+```
+
+\vspace{0.5em}
+
+We can see that all parameters (estimated differences, standard error and *t*-ratio) are the same among the adjustment, as they only adjust the *p* value. In this case, the same conclusion can be taken from all the three *post hocs*: all three groups adjusted means significantly differ from each other.
 
 \pagebreak
