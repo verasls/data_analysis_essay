@@ -161,14 +161,16 @@ emmeans(ancova_2, ~ group)
 # Get model coefficients
 summary.lm(ancova_2)
 
-# Model diagnostics plots
-plot(ancova_2, 1) # Homogeneity of variance
-plot(ancova_2, 2) # Q-Q plot
-
 # Post hoc tests ----------------------------------------------------------
 
 pairs(emmeans(ancova_2, ~ group), adjust = "Bonferroni")
 pairs(emmeans(ancova_2, ~ group), adjust = "Holm")
+pairs(emmeans(ancova_2, ~ group), adjust = "Tukey")
+
+# Model diagnostic plots --------------------------------------------------
+
+plot(ancova_2, 1) # Homogeneity of variance
+plot(ancova_2, 2) # Q-Q plot
 
 # Plot pre- and post- test scores by group --------------------------------
 
