@@ -18,6 +18,59 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 ```
 
+
+# The ANCOVA
+
+## What is ANCOVA?
+
+Sometimes a researcher wants to evaluate whether or not the means of an outcome variable are equal among different treatment conditions. These treatment conditions are usually expressed through categorical variables and, when there are at least three conditions (or groups), the statistical test more suitable to answer this question is an analysis of variance (ANOVA) [@Field_2012]. The ANOVA model can be expanded by the inclusion of a continuous variable in addition to the treatment conditions categorical variable [@Rutherford_2011]. When these continuous variables have an influence on the outcome variable, but have not been controlled by the experimental manipulations, they are called covariates, and the inclusion of covariates in the ANOVA is a method called analysis of covariance (ANCOVA) [@Rutherford_2011; @Field_2012]. By controlling for the covariate, the ANCOVA is a statitical procedure that evaluates more precisely the treatment effect of the experimental manipulations, as it eliminates the variance that was not due to the treatment itself and would have been residual variance in an ANOVA [@Field_2012]. The ANCOVA, then, has two important features: i) it reduces error variance, increasing the fit of the model; and ii) it eliminates the confounding effects of other variables on the experimental conditions [@Field_2012].
+
+\vspace{0.5em}
+
+## The general linear model
+
+The ANCOVA is part of the general linear model (GLM), along with some other statistical methods such as the *t*-tests, ANCOVA, single or multiple linear regression and multilevel models [@Rutherford_2011; @Agresti_2015]. As such, it can be written in a general equation [@Rutherford_2011]:
+
+\begin{equation}
+  outcome_i = model + error_i
+  (\#eq:GLM1)
+\end{equation}
+
+The "general" term in GLM represents its capacity to include either distinctions in quantitative continuous variables or categorical variables representing experimental conditions [@Rutherford_2011]. The "linear" term implies that it shoud be a linear relationship between the outcome and independent variables [@Rutherford_2011]. Also, as GLM is a linear model, the Equation \@ref(eq:GLM1) can be more precisely represented by:
+
+\begin{equation}
+  Y_i = \left(\beta_0 + \beta_1X_{1i}\right) + \epsilon_i
+  (\#eq:GLM2)
+\end{equation}
+
+Where $Y$ is the predicted outcome for the $i$th subject, $\beta_0$ is the constant and represents the intercept in the Y axis, $\beta_1$ is the regression coefficient and represents the slope of the line, $X_{1i}$ is the value of the independent variable, or predictor, for the $i$th subject and $\epsilon_i$ is the error term for the $i$th subject.
+
+Furthermore, the Equation \@ref(eq:GLM2) can be expanded to include more than one independent variable:
+
+\begin{equation}
+  Y_i = \left(\beta_0 + \beta_1X_{1i} + \beta_2X_{2i} + ... + \beta_kX_{ki}\right) + \epsilon_i
+  (\#eq:GLM3)
+\end{equation}
+
+As such, the ANCOVA can be thought as a multiple linear regression model, with the covariate being one of the predictors as a continuous variable, and the experimental condition other predictor as a categorical variable. For two experimental conditions we have:
+
+\begin{equation}
+  outcome_i = \beta_0 + \beta_1covariate_i + \beta_2group_{1i} + \epsilon_i
+  (\#eq:GLM4)
+\end{equation}
+
+And for $k$ experimental conditions there will be $k - 1$ predictors indicating these categories.
+
+\vspace{0.5em}
+
+## ANCOVA applications
+
+\vspace{0.5em}
+
+## The assumptions behind the ANCOVA
+
+\vspace{0.5em}
+
 # Performing an ANCOVA using R
 
 ## Installing and loading necessary packages
