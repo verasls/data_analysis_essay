@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 
 ## What is ANCOVA?
 
-Sometimes a researcher wants to evaluate whether or not the means of an outcome variable are equal among different treatment conditions. These treatment conditions are usually expressed through categorical variables and, when there are at least three conditions (or groups), the statistical test more suitable to answer this question is an analysis of variance (ANOVA) [@Field_2012]. The ANOVA model can be expanded by the inclusion of a continuous variable in addition to the treatment conditions categorical variable [@Rutherford_2011]. When these continuous variables have an influence on the outcome variable, but have not been controlled by the experimental manipulations, they are called covariates, and the inclusion of covariates in the ANOVA is a method called analysis of covariance (ANCOVA) [@Rutherford_2011; @Field_2012]. By controlling for the covariate, the ANCOVA is a statitical procedure that evaluates more precisely the treatment effect of the experimental manipulations, as it eliminates the variance that was not due to the treatment itself and would have been residual variance in an ANOVA [@Field_2012]. The ANCOVA, then, has two important features: i) it reduces error variance, increasing the fit of the model; and ii) it eliminates the confounding effects of other variables on the experimental conditions [@Field_2012].
+Sometimes a researcher wants to evaluate whether or not the means of an outcome variable are equal among different treatment conditions. These treatment conditions are usually expressed through categorical variables and, when there are at least three conditions (or groups), the statistical test more suitable to answer this question is an analysis of variance (ANOVA) [@Field_2012]. The ANOVA model can be expanded by the inclusion of a continuous variable in addition to the treatment conditions categorical variable [@Rutherford_2011]. When these continuous variables have an influence on the outcome, but have not been controlled by the experimental manipulations, they are called covariates, and the inclusion of covariates in the ANOVA is a method called analysis of covariance (ANCOVA) [@Rutherford_2011; @Field_2012]. By controlling for the covariate, the ANCOVA is a statitical procedure that evaluates more precisely the treatment effect of the experimental manipulations, as it eliminates the variance that was not due to the treatment itself and would have been residual variance in an ANOVA [@Field_2012]. The ANCOVA, then, has two important features: i) it reduces error variance, increasing the fit of the model; and ii) it eliminates the confounding effects of other variables on the experimental conditions [@Field_2012].
 
 \vspace{0.5em}
 
@@ -63,7 +63,11 @@ And for $k$ experimental conditions there will be $k - 1$ predictors indicating 
 
 \vspace{0.5em}
 
-## ANCOVA applications
+## The use of ANCOVA
+
+One of the most frequent uses of the ANCOVA is to analyse data from studies with pre-test *vs.* post-test designs [@Dimitrov_2003]. This study design is characterized by having at least two groups, usually with a control, and each group is measured before and after the intervention [@Gliner_2003]. The allocation of study participants into the groups can be randomized or not [@Dimitrov_2003]. Some studies [@Dimitrov_2003; @VanBreukelen_2006; @Connell_2017] have tested several methods to analyse this type of data, such as ANCOVA, ANOVA of change score, repeated measures ANOVA and linear mixed models, and the ANCOVA arrised as the preferred method.
+
+In this type of design, the pre-test scores of the dependent variable are used as covariate to adjust the post-test scores which are the outcome variable and variate [@Gliner_2003].
 
 \vspace{0.5em}
 
