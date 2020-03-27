@@ -28,7 +28,7 @@ In order to perform all the analysis in this tutorial, you will need to install 
 
 - `datarium`: For accessing sample data;
 - `tidyverse`: For data manipulation and plotting;
-- `car`: To calculate the Type III analysis of variance (ANOVA) table and to execute the Levene's test;
+- `car`: To calculate the Type III sum of squares and to execute the Levene's test;
 - `emmeans`: To compute the estimated marginal means from the models.
 
 Execute these commands to install the packages:
@@ -43,7 +43,7 @@ install.packages("emmeans")
 
 \vspace{0.5em}
 
-And then, these commands to load the packages into your R session.
+And then, these commands to load the packages into your R session:
 
 \vspace{0.5em}
 
@@ -55,7 +55,7 @@ library(emmeans)
 
 ## Entering the data
 
-For this tutorial, we will be using the `anxiety` dataset contained in the `datarium` package. As describe by the package manual, this data contains 45 individuals (`id` variable), divided into three groups (`group` variable), and their measured anxiety score at three time points (`t1`, `t2`, and `t3` variables). These data can be load and displayed with the following commands:
+For this tutorial, we will be using the `anxiety` dataset contained in the `datarium` package. As described by the package manual, this data contains 45 individuals (`id` variable), divided into three groups (`group` variable), and their measured anxiety score at three time points (`t1`, `t2`, and `t3` variables). These data can be loaded and displayed with the following commands:
 
 \vspace{0.5em}
 
@@ -145,9 +145,9 @@ ggplot(data = anxiety_long, mapping = aes(x = group, y = score)) +
 
 \vspace{0.5em}
 
-As can be observed in the Figure \@ref(fig:boxplot) boxplots, pre-test anxiety score values are roughly equal among groups, while the post-test scores tend to be lower for the moderate, but mainly for the high intensty group, compared to the control. This indicates that there is at least a tendency to the exercise to decrease an individual`s anxiety level, and exercise intensity may play a role in it. Also, there is no clear difference in the spread of the scores among groups both time points.
+As can be observed in the Figure \@ref(fig:boxplot) boxplots, pre-test anxiety score values are roughly equal among groups, while the post-test scores tend to be lower for the moderate, but mainly for the high intensty group, compared to the control. This indicates that there is at least a tendency to the exercise to decrease an individual`s anxiety level, and exercise intensity may play a role in it. Also, there is no clear difference in the spread of the scores among groups at both time points.
 
-Another useful plot to make is the histogram, as we need to verify whether the pre- and post-test scores are normally distributed in all of the groups [@Rutherford_2011], which is an assumption of parametric tests, such as the ANCOVA. We can plot a frequency histogram by executing the following code:
+Another useful plot to make is the histogram, as we need to verify whether the pre- and post-test scores are normally distributed in all of the groups, which is an assumption of parametric tests, such as the ANCOVA [@Rutherford_2011; @Field_2012]. We can plot a frequency histogram by executing the following code:
 
 \vspace{0.5em}
 
@@ -244,9 +244,9 @@ shapiro.test(anxiety_h$post_test)
 
 \vspace{0.5em}
 
-As all *p* values were > 0.05, we can assume that both pre- and post-test scores of all groups had a normal distribution.
+As all *p* values were > 0.05, we can accept the null hypothesis that both pre- and post-test scores of all groups had a normal distribution.
 
-Then, another assumption of the parametric tests needs to be checked, which is the homogeneity of the variances [@Rutherford_2011; @Field_2012]. We can check if the variance of the outcome variable (post-test scores) is constant across groups by executing a Levene's test, which tests the null hypothesis that the variances in different groups are equal. In R, this test can be done by the `leveneTest()` function:
+Then, another assumption of the parametric tests that needs to be checked is the homogeneity of the variances [@Rutherford_2011; @Field_2012]. We can check if the variance of the outcome variable (post-test scores) is constant across groups by executing a Levene's test, which tests the null hypothesis that the variances in different groups are equal. In R, this test can be done by the `leveneTest()` function:
 
 \vspace{0.5em}
 
@@ -256,7 +256,7 @@ leveneTest(anxiety$post_test, anxiety$group, center = median)
 
 \vspace{0.5em}
 
-As the *p* value (located in the `Pr(>F)` column) is > 0.05, we assume that the null hypothesis is correct and that the variances are equal across the groups.
+As the *p* value (located in the `Pr(>F)` column) is > 0.05, we accept the null hypothesis that the variances are equal across the groups.
 
 Finally, some descriptive statistics can be calculated, such as the sample size, mean and standard deviation of the scores:
 
@@ -319,7 +319,7 @@ The coefficients *p* value can be found in the `Pr(>|t|)` column of the output. 
 
 \vspace{0.5em}
 
-```{r lm-plot, fig.pos="H", out.extra="", out.width="75%", fig.align="center", fig.cap="Scatterplot of pre-test X post-test scores, with linear regression lines. Groups (Control, Moderate and High) are distinguished by different point and line colors."}
+```{r lm-plot, fig.pos="H", out.extra="", out.width="75%", fig.align="center", fig.cap="Scatterplot of pre-test versus post-test scores, with linear regression lines. Groups (Control, Moderate and High) are distinguished by different dot and line colors."}
 ggplot(
   data = anxiety, 
   mapping = aes(x = pre_test, y = post_test, colour = group)
@@ -356,7 +356,7 @@ In the output above, by looking at the line regarding the interaction term (`pre
 
 ### Fitting the model 
 
-To fit the ANCOVA model we can use the `aov()` function:
+Now  that all assumptions were checked, and none was violated, we can fit an ANCOVA model using the `aov()` function:
 
 \vspace{0.5em}
 
@@ -402,7 +402,7 @@ emmeans(ancova, ~ group)
 
 \vspace{0.5em}
 
-We can see that these means are slightly different from the original means, as, within each group, they were adjusted for the pre-test scores. Knowing this, we can now move to further analyse which groups differ. There are two ways we can accomplish that: using planned contrasts and using *post hoc* tests.
+We can see that these means are slightly different from the original means, as, within each group, they were adjusted for the pre-test scores. Knowing this, we can now move further and analyse which groups differ. There are two ways we can accomplish that: using planned contrasts and using *post hoc* tests.
 
 ### Interpreting the contrasts
 
@@ -431,7 +431,7 @@ And, to more closely represent our ANCOVA:
   (\#eq:ancova1)
 \end{equation}
 
-Replacing the dummy variables contrasts for the moderate group, for example:
+Replacing the dummy variables contrasts for the moderate group, for example, we get:
 
 \begin{equation}
   post\_test = \beta_0 + \beta_1pre\_test + \beta_2 \times 1 + \beta_3 \times 0
@@ -480,7 +480,7 @@ Total    & 0          & 0          & 0       \\
 \end{tabular}
 \end{table}
 
-We can see in Table \@ref(tab:tab-contrast) that the sum of each contrast coefficients is 0. Also the sum of the coeffients products also equals to 0, therefore we can conclude that these contrasts are orthogonal. Examining the Contrast 1, it shows that the control group has a weight of 2, as it is being compared against the means of two other groups, and the moderate and high groups have the same weight and a different sign than the control. For the Contrast 2, the weight of the control group is 0, as it was already singled out in the Contrast 1, and the moderate and high groups have the same weight, but with different signs, as they now are being compared with one another.
+We can see in Table \@ref(tab:tab-contrast) that the sum of each contrast coefficients is 0. Also the sum of the coeffients products also equals to 0, therefore we can conclude that these contrasts are indeed orthogonal. Examining the Contrast 1, it shows that the control group has a weight of 2, as it is being compared against the means of two other groups, and the moderate and high groups have the same weight and a different sign than the control. For the Contrast 2, the weight of the control group is 0, as it was already singled out in the Contrast 1, and the moderate and high groups have the same weight, but with different signs, as they now are being compared with one another.
 
 These contrasts can be establishd in R by the following command:
 
@@ -502,7 +502,7 @@ Anova(ancova_2, type = "III")
 emmeans(ancova_2, ~ group)
 ```
 
-By inspecting these results, we can see that they are the same than for the first model, which was expected, as the data did not change. The only difference that can be observed is in the sum of squares for the intercept. That happens because all linear model coefficients have changed, reflecting the new coding for the `group` variable, as we can see:
+By inspecting these results, we can see that they are the same than for the first model, which was expected, as the data did not change. The only difference that can be observed is in the sum of squares for the intercept. That happens because all linear model coefficients have changed, including the intercept, reflecting the new coding for the `group` variable, as we can see:
 
 \vspace{0.5em}
 
@@ -520,9 +520,9 @@ Now, the `group1` coefficient reflects the Contrast 1, which is the comparison b
   &= 1.71007 \nonumber
 \end{align}
 
-Looking at the results for the Equation \@ref(eq:beta1), we would assume that the coefficient for the Contrast 1 is 1.71007, which is not true. This value still gets divided by the number of groups in the contrast, 3 in this case, to control for the inflated familywise error. Therefore, $\beta_{group1} = \frac{1.71007}{2} = 0.57002$, the same as shown in the output above. Furthermore, the *p* value for this coefficient (`Pr(>|t|)` column) is < 0.05, which indicates that the control group adjusted mean is significantly different than the means for the moderate and high groups.
+Looking at the results for the Equation \@ref(eq:beta1), we would assume that the coefficient for the Contrast 1 is 1.71007, which is not true. This value still gets divided by the number of groups in the contrast, 3 in this case, to control for the inflated familywise error. Therefore, $\beta_{group1} = \frac{1.71007}{3} = 0.57002$, the same as shown in the output above. Furthermore, the *p* value for this coefficient (`Pr(>|t|)` column) is < 0.05, which indicates that the control group adjusted mean is significantly different than the means for the moderate and high groups. Therefore, we can conclude that the treatment conditions are significantly different than the control.
 
-The `group2` coefficient is related to the Contrast 2, which compares the moderate and high groups. Repeting the same process shown in Equation \@ref(eq:beta1) we get:
+The `group2` coefficient is related to the Contrast 2, which compares the moderate and high groups. Repeating the same process shown in Equation \@ref(eq:beta1) we get:
 
 \begin{align}\label{eq:beta2}
   \beta_{group2} &= \bar{X}_{moderate} - \bar{X}_{high} \\
@@ -530,11 +530,11 @@ The `group2` coefficient is related to the Contrast 2, which compares the modera
   &= 2.32847 \nonumber
 \end{align}
 
-Then, dividing this value by 2, which is the number of groups involved in the contrast, we have $\beta_{group2} = 2.32847 = 1.16424$, the same as seen in the output. The *p* value for this coefficient is also < 0.05, indicating that the difference in the adjusted means of the moderate and high groups is statistically significant.
+Then, dividing this value by 2, which is the number of groups involved in the contrast, we have $\beta_{group2} = 2.32847 = 1.16424$, the same as seen in the output. The *p* value for this coefficient is also < 0.05, indicating that the difference in the adjusted means of the moderate and high groups is statistically significant. Hence, exercising at higher intensities shows to be more effective to reduce anxiety levels.
 
 ### *Post hoc* tests
 
-*Post hoc* tests are parwise comparisons that compare all possible combinations of groups. It is like performing a *t*-test on each pair of groups, but applying an adjustment to the *p* value to control for the inflated familywise error. In an ANCOVA, we must use the adjusted means in the *post hoc* tests. In R, we can use the `pairs()` function, and select the adjusted means for comparison (*e.g.*: `emmeans(ancova_2, ~ group)`) and then choose the adjustment method with the `adjust` argument. Below we can see the *post hoc* test with three of the most common adjustments.
+Another way to test for differences between the groups is by running *post hoc* tests. These tests are parwise comparisons that compare all possible combinations of groups. It is like performing a *t*-test on each pair of groups, but applying an adjustment to the *p* value to control for the inflated familywise error. In an ANCOVA, we must use the adjusted means in the *post hoc* tests. In R, we can use the `pairs()` function, and select the adjusted means for comparison (*e.g.*: `emmeans(ancova_2, ~ group)`) and then choose the adjustment method with the `adjust` argument. Below we can see the *post hoc* test with three of the most common adjustments.
 
 \vspace{0.5em}
 
@@ -552,7 +552,7 @@ pairs(emmeans(ancova_2, ~ group), adjust = "Tukey")
 
 \vspace{0.5em}
 
-We can see that all parameters (estimated differences, standard error and *t*-ratio) are the same among the adjustment, as they only adjust the *p* value. In this case, the same conclusion can be taken from all the three *post hocs*: all three groups adjusted means significantly differ from each other.
+We can see that all parameters (estimated differences, standard error and *t*-ratio) are the same among the adjustment, as they only adjust the *p* value. In this case, the same conclusion can be taken from all the three *post hoc* adjustment methods: all three groups adjusted means significantly differ from each other.
 
 ### Model diagnostic plots
 
