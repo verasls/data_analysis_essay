@@ -62,11 +62,13 @@ And for $k$ experimental conditions there will be $k - 1$ predictors indicating 
 
 \vspace{0.5em}
 
-## The use of ANCOVA
+## The uses of ANCOVA
 
-One of the most frequent uses of the ANCOVA is to analyse data from studies with pre-test *vs.* post-test designs [@Dimitrov_2003]. This study design is characterized by having at least two groups, usually with a control, and each group is measured before and after the intervention [@Gliner_2003]. The allocation of study participants into the groups can be randomized or not [@Dimitrov_2003]. Some studies [@Dimitrov_2003; @VanBreukelen_2006; @Connell_2017] have tested several methods to analyse this type of data, such as ANCOVA, ANOVA of change score, repeated measures ANOVA and linear mixed models, and the ANCOVA arrised as the preferred method.
+One of the main applications of ANCOVA is to control for other variables that can influence the outcome [@Field_2012]. An example would be to control for the age of the participants in a study aiming to investigate the effects of exercise training on bone mineral density, as age is a factor known to influence the osteogenic response to exercise. Another frequent use of the ANCOVA is to analyse data from studies with pre-test *vs.* post-test designs [@Dimitrov_2003]. This study design is characterized by having at least two groups, usually with a control, and each group is measured before and after the intervention [@Gliner_2003]. The allocation of study participants into the groups can be randomized or not [@Dimitrov_2003]. Some studies [@Dimitrov_2003; @VanBreukelen_2006; @Connell_2017] have tested several methods to analyse this type of data, such as ANCOVA, ANOVA of change score, repeated measures ANOVA and linear mixed models, and the ANCOVA arrised as the preferred method.
 
-In this type of design, the pre-test scores of the dependent variable are used as covariate to adjust the post-test scores which are the outcome variable and variate [@Gliner_2003]. 
+In this type of design, the pre-test scores of the dependent variable are used as covariate to adjust the post-test scores which are the outcome variable and variate [@Gliner_2003]. As a general advice, the adjustment for baseline scores should be done even when there are no signficicant differences among groups as these scores can be seen as confounders of the treatment effect [@Twisk_2018]. Thus, any small variations on the pre-test scores can affect the post-test values, and to reduce the error variance and improve the model fit, this adjustment should be done [@Dimitrov_2003; @Twisk_2018]. 
+
+The rest of this tutorial will cover the application of ANCOVA in a pre-test *vs.* post-test study design.
 
 \vspace{0.5em}
 
@@ -178,6 +180,8 @@ anxiety_long
 ```
 
 \vspace{0.5em}
+
+It is important to highlight that, as this is an example of a pre-test *vs.* post-test study design, our outcome variable is the post-test anxiety score, the covariate is the pre-test anxiety score and the groups (control, moderate and high) are the treatment conditions.
 
 ## Exploring the data
 
