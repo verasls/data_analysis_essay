@@ -74,6 +74,15 @@ The rest of this tutorial will cover the application of ANCOVA in a pre-test *vs
 
 ## The assumptions behind the ANCOVA
 
+As any statistical test, the ANCOVA has a series of assumptions that need to be met for the conclusions taken from it to be valid [@Field_2012]. As the it is a parametric test, first, the assumptions that are common to this type of test need to be true [@Field_2012]. These assumptions are:
+
+- Normal distribution of data: the sample distribution must be normal within the groups.
+- Homogeneity of variance: the variances must be equal across the groups.
+- Interval data: data must be measured continuous, measured at least at the interval level.
+- Independence: data from different participants should be independent from each other.
+
+At the data analysis, the main assumptions that need to be checked are the first two. The normallity of data distribution can be checked visually (with histograms, for example) or with a normality test such as Shapiro-Wilk, while the homogeneity of variance can be checked through the Levene's test [@Field_2012].
+
 \vspace{0.5em}
 
 # Performing an ANCOVA using R
