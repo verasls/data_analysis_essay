@@ -7,9 +7,8 @@ output:
     includes:
       in_header: preamble.tex
       before_body: title.tex
-    citation_package: biblatex
 bibliography: bibliography.bib
-biblio-style: apa
+csl: apa.csl
 editor_options: 
   chunk_output_type: console
 ---
@@ -29,7 +28,7 @@ Sometimes a researcher wants to evaluate whether or not the means of an outcome 
 
 ## The general linear model
 
-The ANCOVA is part of the general linear model (GLM), along with some other statistical methods such as the *t*-tests, ANCOVA, single or multiple linear regression and multilevel models [@Rutherford_2011; @Agresti_2015]. As such, it can be written in a general equation [@Rutherford_2011]:
+The ANCOVA is part of the general linear model (GLM), along with some other statistical methods such as the *t*-tests, ANOVA, single or multiple linear regression and multilevel models [@Rutherford_2011; @Agresti_2015]. As such, it can be written in a general equation [@Rutherford_2011]:
 
 \begin{equation}
   outcome_i = model + error_i
@@ -67,7 +66,7 @@ And for $k$ experimental conditions there will be $k - 1$ predictors indicating 
 
 One of the most frequent uses of the ANCOVA is to analyse data from studies with pre-test *vs.* post-test designs [@Dimitrov_2003]. This study design is characterized by having at least two groups, usually with a control, and each group is measured before and after the intervention [@Gliner_2003]. The allocation of study participants into the groups can be randomized or not [@Dimitrov_2003]. Some studies [@Dimitrov_2003; @VanBreukelen_2006; @Connell_2017] have tested several methods to analyse this type of data, such as ANCOVA, ANOVA of change score, repeated measures ANOVA and linear mixed models, and the ANCOVA arrised as the preferred method.
 
-In this type of design, the pre-test scores of the dependent variable are used as covariate to adjust the post-test scores which are the outcome variable and variate [@Gliner_2003].
+In this type of design, the pre-test scores of the dependent variable are used as covariate to adjust the post-test scores which are the outcome variable and variate [@Gliner_2003]. 
 
 \vspace{0.5em}
 
@@ -638,3 +637,7 @@ plot(ancova_2, 2)
 This plot shows if the residuals distribution deviates from normality. It plots the cumulative values in the data against the cumulative probability of the normal distribution. If the dots fall in the diagonal dotted line (which is the case for the majority of dots), the data has a normal distribution.
 
 \pagebreak
+# References
+\setlength{\parindent}{-0.2in}
+\setlength{\leftskip}{0.2in}
+\noindent
