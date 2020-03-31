@@ -74,14 +74,20 @@ The rest of this tutorial will cover the application of ANCOVA in a pre-test *vs
 
 ## The assumptions behind the ANCOVA
 
-As any statistical test, the ANCOVA has a series of assumptions that need to be met for the conclusions taken from it to be valid [@Field_2012]. As the it is a parametric test, first, the assumptions that are common to this type of test need to be true [@Field_2012]. These assumptions are:
+As any statistical test, the ANCOVA has a series of assumptions that need to be met for the conclusions taken from it to be valid [@Field_2012]. Being it a parametric test, first, the assumptions that are common to this type of test need to be true [@Field_2012]. These assumptions are:
 
 - Normal distribution of data: the sample distribution must be normal within the groups.
 - Homogeneity of variance: the variances must be equal across the groups.
 - Interval data: data must be measured continuous, measured at least at the interval level.
 - Independence: data from different participants should be independent from each other.
 
-At the data analysis, the main assumptions that need to be checked are the first two. The normallity of data distribution can be checked visually (with histograms, for example) or with a normality test such as Shapiro-Wilk, while the homogeneity of variance can be checked through the Levene's test [@Field_2012].
+At the data analysis, the main assumptions that need to be checked are the first two. The normallity of data distribution can be checked visually (with histograms or Q-Q plots, for example) or with a normality test such as Shapiro-Wilk, while the homogeneity of variance can be checked through the Levene's test [@Field_2012].
+
+Also, there are some assumptions specific to the ANCOVA. First, is the independence of the covariate and the treatment effect [@Rutherford_2011; @Field_2012]. The importance of this assumption is that, if the covariate and the treatment effect (the independent variable) are not independent, they share some variance, and the experimental effect will be confounded by the covariate [@Field_2012]. That is, part of the variance that would be explained by the treatment effect will be, then, explained by the covariate [@Field_2012].
+
+A second assumption is the linearity of between the covariate and the outcome variable [@Rutherford_2011; @Field_2012]. As the ANCOVA is a GLM, a linear regression will be fit with the covariate as one of the predictors [@Rutherford_2011]. Therefore, it should be expected that the covariate has a linear relationship with the dependent variable [@Rutherford_2011].
+
+The last assumption is the homogeneity of regression slopes [@Rutherford_2011; @Field_2012]. For this assumption to be true, the linear regression slopes of the relationship between the covariate and the dependent variable should be homogenous across the groups [@Field_2012]. It happens due to the fact that, when the ANCOVA model is built, what matters is the overall relationship between the covariate and the outcome, regardless of the groups, and if the regression slope is different across the groups, the model is inaccurate [@Field_2012]. It also means that there is no interaction effect between the covariate and the treatment effect, that is not part of a traditional ANCOVA model [@Rutherford_2011].
 
 \vspace{0.5em}
 
