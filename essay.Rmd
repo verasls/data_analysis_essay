@@ -17,6 +17,13 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 ```
 
+```{r, message=FALSE, include=FALSE}
+library(tidyverse)
+library(car)
+library(emmeans)
+library(socviz)
+```
+
 # The R environment
 
 R is a programming language and environment for statistical computing and graphics [@R]. It is a free and open source software, which means that the code behind it is fully accessible. R existis as a base package, with some functionality, but one of its greatest advantages is that it can be easily extended by packages, that can be developed and distributed by anyone [@R]. Both R and its packages are stored at the Comprehensive R Archive Network (CRAN) [@R]. Albeit free, powerful and very versatile, R may not be easy to learn. One of the main reasons is that it works as a command line tool, rather than by a graphical user interface, as other statistical softwares such as SPSS. But, once you master a few things, these written commands show to be a more efficient way to work.
@@ -40,6 +47,148 @@ Figure \@ref(fig:rstudio) shows the main RStudio window. To write and edit R cod
 The code can also be typed directly at the Console Pannel. It is less advisable, as code typed there cannot be edited or saved to future analysis. To execute code written in a script, put the cursor on the line or highlight the lines (if there are multiple lines to be executed) and press Control + Enter, for Windows, or Command + Enter, for macOS.
 
 ### Introduction to R
+
+This section will cover some basic aspects of the R language to help to understand how it works.
+
+#### Everything is an object
+
+Almost everything in R is some type of object. The code you write will always create, manipulate or use these objects. For example, we can create a vector of numbers using the function `c()`:
+
+\vspace{0.5em}
+
+```{r}
+c(1, 2, 3, 4, 5)
+```
+
+\vspace{0.5em}
+
+But instead of getting the result print in the console, we can assign it to an object using the assignment operator "`<-`":
+
+\vspace{0.5em}
+
+```{r}
+my_vector <- c(1, 2, 3, 4, 5)
+```
+
+\vspace{0.5em}
+
+And to see what this object contains, we can type its name and run the code (remember the shortcuts Control + Enter or Command + Enter):
+
+\vspace{0.5em}
+
+```{r}
+my_vector
+```
+
+\vspace{0.5em}
+
+As the assignment operator is used so frequently, RStudio has a shorcut to for it: Alt + minus (-)
+
+#### Every object has a name
+
+Every object, either varible, data, functions, or else, has a name. For example, to the numeric vector we just created was attributed the name "`my_vector`". Each different object you create has to have a different name, otherwise it will overwrite the previous object. For example:
+
+\vspace{0.5em}
+
+```{r}
+my_vector <- "another object"
+```
+
+\vspace{0.5em}
+
+The code above attributes to the object "`my_vector`" the character string "`another object`". We can inspect by typing again the object name and executing it:
+
+\vspace{0.5em}
+
+```{r}
+my_vector
+```
+
+\vspace{0.5em}
+
+And we can see that it no longer represents the numeric vector created earlier. Another important thing regarding object names is that is R, the names are case sensitive, hence we need to pay close attention to the spelling.
+
+\vspace{0.5em}
+
+```{r, error=TRUE}
+My_vector
+```
+
+\vspace{0.5em}
+
+As we can see, typing the name "`My_vector`" with a capital `M` and executing it shows an error message, as an object with this name does not exist. Another important detail is that spaces are not allowed in object names. So to facilitate naming objects, you can follow the tidyverse style guide (accessed through this link: [https://style.tidyverse.org](https://style.tidyverse.org)) and name objects with lower case and separating words with the underscore character "`_`" when needed.
+
+#### You do things with functions
+
+Functions are special types of objects that can perform tasks for you. For example, we have already used the function `c()`, which combines elements into a vector. The functions can be recognized by the parenthesis after their names. Insede the parenthesis are the arguments, that are specific information that a function needs to perform its task. Most functions have one or more arguments, and take the general form:
+
+\vspace{0.5em}
+
+```
+function(argument = value)
+function(argument1 = value1, argument2 = value2, ..., argumentN = valueN)
+```
+
+\vspace{0.5em}
+
+We can se what arguments does a function need in their documentation by and putting a question mark before the function name executing it: `?c()`. If tou execute a function without specifying a required argument it will raise an error:
+
+\vspace{0.5em}
+
+```{r, error=TRUE}
+mean()
+```
+
+\vspace{0.5em}
+
+As the error message implies, we need to specify the argument `x`:
+
+\vspace{0.5em}
+
+```{r}
+my_vector <- c(1, 2, 3, 4, 5)
+mean(x = my_vector)
+```
+
+\vspace{0.5em}
+
+Also, we do not need to specify the argument name:
+
+\vspace{0.5em}
+
+```{r}
+my_vector <- c(1, 2, 3, 4, 5)
+mean(my_vector)
+```
+
+\vspace{0.5em}
+
+By doing so, R will assume that you are giving the arguments in the function's default order (that can be seen in the documentation: `?function_name()`), so, be careful.
+
+#### Data
+
+The most common class of object to store datasets in R is the data frame. Data frames are a retangular table with rows and columns. We can see an example of a data frame with a tiny dataset contained in the `socviz` package:
+
+\vspace{0.5em}
+
+```{r}
+titanic
+```
+
+\vspace{0.5em}
+
+Another object type that R uses to store datasets and that we will use throughout this tutorial is the tibble. Tibbles are very similar to data frames, but show more infomation regarding the type of data in the columns and are more friendly to interact in the console.
+
+\vspace{0.5em}
+
+```{r}
+titanic <- as_tibble(titanic)
+titanic
+```
+
+\vspace{0.5em}
+
+In this tutorial we will be using datasets provided by R packages. For more information about how to import data from a file to R, I recommend reading the chapter "Data Import" from the R for Data Science book [@R4DS] that can be read online ([https://r4ds.had.co.nz](https://r4ds.had.co.nz)).
 
 # The ANCOVA
 
@@ -125,8 +274,7 @@ In order to perform all the analysis in this tutorial, you will need to install 
 - `datarium`: For accessing sample data;
 - `tidyverse`: For data manipulation and plotting;
 - `car`: To calculate the Type III sum of squares (SS) and to execute the Levene's test;
-- `emmeans`: To compute the estimated marginal means from the models;
-- `compute.es`; To compute effect sizes.
+- `emmeans`: To compute the estimated marginal means from the models.
 
 Execute these commands to install the packages:
 
@@ -144,7 +292,7 @@ And then, these commands to load the packages into your R session:
 
 \vspace{0.5em}
 
-```{r load-packs, message=FALSE}
+```{r load-packs, eval=FALSE}
 library(tidyverse)
 library(car)
 library(emmeans)
@@ -276,6 +424,12 @@ bin_width <- function(variable) {
   return(bw)
 }
 ```
+
+\vspace{0.5em}
+
+To load this function into your R session, execute the code chunk above.
+
+\vspace{0.5em}
 
 ```{r histogram-pre, fig.pos="H", out.extra="", out.width="75%", fig.align="center", fig.cap="Histogram of the pre-test scores separated by group (Control, Moderate and High)."}
 ggplot(data = anxiety, mapping = aes(pre_test)) +
