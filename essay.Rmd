@@ -24,6 +24,10 @@ library(emmeans)
 library(socviz)
 ```
 
+# Introduction
+
+The present work is a tutorial about analysis of covariance (ANCOVA) using the R Project for statistical computing. It will, first, present an introduction to R covering how to download and install it, as well as some basic concepts regarding the R programming language. After, it will approach some theoretical background behind the ANCOVA and general linear models (GLM). Then, a more practical section about how to perform an ANCOVA using R will be presented, including how to enter and explore the data, check the assumptions of the statistical test and fit the ANCOVA model. Finally, the last section will cover some suggestions on how to report the results of the test in the form of a scientific paper.
+
 # The R environment
 
 R is a programming language and environment for statistical computing and graphics [@R]. It is a free and open source software, which means that the code behind it is fully accessible. R existis as a base package, with some functionality, but one of its greatest advantages is that it can be easily extended by packages, that can be developed and distributed by anyone [@R]. Both R and its packages are stored at the Comprehensive R Archive Network (CRAN) [@R]. Albeit free, powerful and very versatile, R may not be easy to learn. One of the main reasons is that it works as a command line tool, rather than by a graphical user interface, as other statistical softwares such as SPSS. But, once you master a few things, these written commands show to be a more efficient way to work.
@@ -38,7 +42,7 @@ I also suggest to install and use RStudio, which is an integrated development en
 
 ### The RStudio interface
 
-```{r rstudio, echo=FALSE, fig.pos="H", out.extra="", out.width="100%", fig.align="center", fig.cap="RStudio main window. Letter A indicates the Source Pannel; Letter B the Console Pannel; and Letter C the Files/Plots/Packages/Help/Viewer Pannel."}
+```{r rstudio, echo=FALSE, out.extra="", out.width="100%", fig.align="center", fig.cap="RStudio main window. Letter A indicates the Source Pannel; Letter B the Console Pannel; and Letter C the Files/Plots/Packages/Help/Viewer Pannel."}
 knitr::include_graphics("figs/RStudio.png")
 ```
 
@@ -896,6 +900,8 @@ partial_eta_squared(SS[2, 1], SS[4, 1])
 ```
 
 \vspace{0.5em}
+
+# Reporting the results
 
 \pagebreak
 # References
