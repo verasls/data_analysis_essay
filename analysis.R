@@ -47,7 +47,7 @@ ggplot(data = anxiety_long, mapping = aes(x = group, y = score)) +
     stackdir = "center",
     dotsize = 0.7,
     binwidth = 0.3,
-    fill= "white"
+    fill = "white"
   ) +
   facet_wrap(~time) +
   labs(x = "Group", y = "Anxiety score")
@@ -122,7 +122,7 @@ ggplot(
     method = "lm",
     se = FALSE
   ) +
-  guides(color=guide_legend("group")) +
+  guides(color = guide_legend("group")) +
   labs(
     x = "Pre-test",
     y = "Post-test"
