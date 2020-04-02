@@ -1,7 +1,7 @@
 ---
 output:
   bookdown::pdf_document2:
-    highlight: tango
+    # highlight: tango
     toc: false
     number_sections: yes
     includes:
@@ -901,7 +901,107 @@ partial_eta_squared(SS[2, 1], SS[4, 1])
 
 \vspace{0.5em}
 
-# Reporting the results
+### Plotting post-test scores by group
+
+To graphically present the results of our analysis, we can build a plot with our outcome variable, the post-test scores, divided by the treatment conditions, the groups. It will be, then, useful to plot the group means and their confidence intervals. First, to explore the results, we will build a plot with the non-adjusted means. Before plotting, we need to get the descriptive data and calculate the confidence intervals as:
+
+\begin{equation}
+  confidence\ interval = \bar{X} \pm \left(t_{df} \times SE \right)
+  (\#eq:ci)
+\end{equation}
+
+Where $\bar{X}$ is the sample mean, $t_{df}$ is the quantile of a *t*-distribution with the corresponding degrees of freedom (sample size $-$ 1) and SE is the standard error of the mean. As we are interested in a 95% confidence interval we need the two-tailed *t* value for a 0.05 probability, which corresponds to the 97.5% quantile [@Field_2012]. Also, as in the `descriptives` data frame we created earlier there is no SE, we can calculate it as:
+
+\begin{equation}
+  SE = \frac{sd}{\sqrt{n}}
+  (\#eq:SE)
+\end{equation}
+
+Where $sd$ is the standard deviation and $n$ is the sample size. Therefore, to calculate the confidence interval and put it into a data frame to be used to build the plot, we execute the following:
+
+\vspace{0.5em}
+
+```{r ancova-desc-no-adj}
+no_adj_plot_df <- descriptives %>% 
+  filter(time == "Post-test") %>% 
+  mutate(
+    lower_CI = mean - ((sd / sqrt(n)) * qt(0.975, df = n - 1)),
+    upper_CI = mean + ((sd / sqrt(n)) * qt(0.975, df = n - 1))
+  )
+no_adj_plot_df %>% as.data.frame()
+```
+
+\vspace{0.5em}
+
+And then create the plot:
+
+\vspace{0.5em}
+
+```{r ancova-plot-no-adj, fig.pos="H", out.extra="", out.width="75%", fig.align="center", fig.cap="Post-test anxiety scores non-adjusted group means and 95\\% confidence intervals."}
+ggplot(data = no_adj_plot_df) +
+  geom_point(
+    mapping = aes(x = group, y = mean),
+    position = position_dodge(0.3)
+  ) +
+  geom_errorbar(
+    aes(x = group, ymin = lower_CI, ymax = upper_CI),
+    position = position_dodge(0.3), width = 0.3
+  )
+```
+
+\vspace{0.5em}
+
+Analysing the Figure \@ref(fig:ancova-plot-no-adj) we can see that the confidence intervals for the control and moderate group overlap. Thus, we could conclude that there are no significant differences between these groups in the post-test scores, contrary to what our *post hoc* tests have shown. But as we used the non-adjusted means to build this plot, it is not controlled for the pre-test scores and, therefore, it shows the same results as a simple ANOVA. We can confirm that by looking at the results of an ANOVA of the post-test scores by group:
+
+\vspace{0.5em}
+
+```{r anova}
+aov(formula = post_test ~ group, data = anxiety) %>% summary()
+```
+
+\vspace{0.5em}
+
+As it showed significant differences between the groups (*p* < 0.001), we can ask for *post hoc* tests to discover between which groups these differences are. We can use the `pairwise.t.test()` function with the Bonferroni adjustment (`p.adjust.method = "bonferroni"`) to run the *post hoc* tests in our non-adjusted means:
+
+\vspace{0.5em}
+
+```{r anova-post-hoc}
+pairwise.t.test(
+  anxiety$post_test, anxiety$group, 
+  p.adjust.method = "bonferroni"
+)
+```
+
+\vspace{0.5em}
+
+These results confirm what was shown in Figure \@ref(fig:ancova-plot-no-adj): no significant differences between the control and moderate groups (*p* = 0.281). Now, to represent the ANCOVA results, we will put the adjusted means into a data frame and build the same plot using these means:
+
+\vspace{0.5em}
+
+```{r adj-means-df}
+emmeans <- emmeans(ancova_2, ~ group) %>% as.data.frame()
+emmeans
+```
+
+\vspace{0.5em}
+
+```{r ancova-plot-adj, fig.pos="H", out.extra="", out.width="75%", fig.align="center", fig.cap="Post-test anxiety scores adjusted group means and 95\\% confidence intervals."}
+ggplot(data = emmeans) +
+  geom_point(
+    mapping = aes(x = group, y = emmean),
+    position = position_dodge(0.3)
+  ) +
+  geom_errorbar(
+    aes(x = group, ymin = lower.CL, ymax = upper.CL),
+    position = position_dodge(0.3), width = 0.3
+  )
+```
+
+\vspace{0.5em}
+
+Inspecting the confidence intervals in Figure \@ref(fig:ancova-plot-adj) we can concude that all groups significantly differ from each other, and that was the same conclusion we took from the ANCOVA *post hoc* tests. Furthermore, what could be observed analysing Figures \@ref(fig:ancova-plot-no-adj) and \@ref(fig:ancova-plot-adj) reinforces the importance of using an ANCOVA to adjust for baseline values in a pre-test *vs.* post-test study design.
+
+<!-- # Reporting the results -->
 
 \pagebreak
 # References
