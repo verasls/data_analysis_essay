@@ -194,6 +194,56 @@ titanic
 
 In this tutorial we will be using datasets provided by R packages. For more information about how to import data from a file to R, I recommend reading the chapter "Data Import" from the R for Data Science book [@R4DS] that can be read online ([https://r4ds.had.co.nz](https://r4ds.had.co.nz)).
 
+#### Code commenting
+
+When writing code, you can use comments to record important findings and decisions, as well as to separate sections of your code. These comments are simple text that the software will not evaluate to produce any results. In R, comments are marked by a # in the beginning of the line. Anything placed after the # will be a comment.
+
+\vspace{0.5em}
+
+```{r}
+# This is a comment
+```
+
+\vspace{0.5em}
+
+#### Working directory
+
+The working directory is a folder on your computer that R is pointing at. By default, R will make the folder in which it is installed to be the working directory, but you can use the `getwd()` function to discover what is your current working directory.
+
+\vspace{0.5em}
+
+```{r eval=FALSE}
+getwd()
+```
+
+\vspace{0.5em}
+
+You can change your working directory using the `setwd()` function. For this tutorial, I recommend to create a new R script file and save it in a folder named "`ancova_tutorial`" at your desktop, for example. In the first line of this R script you can change your working directory to this folder by doing:
+
+For Windows:
+
+\vspace{0.5em}
+
+```{r eval=FALSE}
+setwd("C:/Users/your_username/Desktop/ancova_tutorial")
+```
+
+\vspace{0.5em}
+
+And for macOS:
+
+\vspace{0.5em}
+
+```{r eval=FALSE}
+setwd("~/Desktop/ancova_tutorial")
+```
+
+\vspace{0.5em}
+
+#### Final remarks
+
+In the [**Performing an ANCOVA using R**](#Performing-an-ANCOVA-using-R) section, the code necessary to perform each step of the data analysis will be presented. You can copy and paste this code into your R script saved inside the `ancova_tutorial` folder in your desktop (or anywhere else) and execute it step by step while reading the tutorial. You can also access the entire code in the following link: [https://raw.githubusercontent.com/verasls/data_analysis_essay/master/analysis.R](https://raw.githubusercontent.com/verasls/data_analysis_essay/master/analysis.R).
+
 # The ANCOVA
 
 ## What is ANCOVA?
