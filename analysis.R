@@ -172,20 +172,6 @@ pairs(emmeans(ancova_2, ~ group), adjust = "Tukey")
 plot(ancova_2, 1) # Homogeneity of variance
 plot(ancova_2, 2) # Q-Q plot
 
-# Effect sizes ------------------------------------------------------------
-
-# Partial eta squared
-partial_eta_squared <- function(SS_effect, SS_residual) {
-  es <- SS_effect / (SS_effect + SS_residual)
-  return(es)
-}
-# Put the sum of squares is a data frame
-SS <- as.data.frame(Anova(ancova_2, type = "III"))[1]
-# For the treatment effect
-partial_eta_squared(SS[3, 1], SS[4, 1])
-# For the covariate
-partial_eta_squared(SS[2, 1], SS[4, 1])
-
 # Plot post-test scores by group ------------------------------------------
 
 # ** Without adjusting for baseline ---------------------------------------
@@ -233,6 +219,20 @@ ggplot(data = emmeans) +
     aes(x = group, ymin = lower.CL, ymax = upper.CL),
     position = position_dodge(0.3), width = 0.3
   )
+
+# Effect sizes ------------------------------------------------------------
+
+# Partial eta squared
+partial_eta_squared <- function(SS_effect, SS_residual) {
+  es <- SS_effect / (SS_effect + SS_residual)
+  return(es)
+}
+# Put the sum of squares is a data frame
+SS <- as.data.frame(Anova(ancova_2, type = "III"))[1]
+# For the treatment effect
+partial_eta_squared(SS[3, 1], SS[4, 1])
+# For the covariate
+partial_eta_squared(SS[2, 1], SS[4, 1])
 
 # Publication plot --------------------------------------------------------
 
