@@ -1,4 +1,12 @@
-# Load packages -----------------------------------------------------------
+# In the line below, change the text between the quotation marks by the path to
+# your working directory
+setwd("your/working/directory")
+
+# Install and load packages -----------------------------------------------
+
+install.packages("tidyverse")
+install.packages("car")
+install.packages("emmeans")
 
 library(tidyverse)
 library(car)
