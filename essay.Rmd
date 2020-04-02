@@ -837,70 +837,6 @@ plot(ancova_2, 2)
 
 This plot shows if the residuals distribution deviates from normality. It plots the cumulative values in the data against the cumulative probability of the normal distribution. If the dots fall in the diagonal dotted line (which is the case for the majority of dots), the data has a normal distribution.
 
-### Effect sizes
-
-An effect size that is commonly calculated in ANCOVA is the partial eta squared ($\eta^2_p$). This effect size corresponds to the proportion of variance that a variable explains and that is not explained by other variables [@Field_2012], and can be expressed as:
-
-\begin{equation}
-  \eta^2_p = \frac{SS_{effect}}{SS_{effect} + SS_{residuals}}
-  (\#eq:partiale2)
-\end{equation}
-
-We can, then, look at SS values on the output of the `Anova(ancova_2, type = "III")` function, substitute these values in the Equation \@ref(eq:partiale2), and calculate the $\eta^2_p$ for the treatment effect:
-
-\begin{align}\label{eq:partiale2group}
-  \eta^2_p &= \frac{SS_{group}}{SS_{group} + SS_{residuals}} \\
-  &= \frac{69.865}{69.865 + 9.468} \nonumber \\
-  &= 0.881 \nonumber
-\end{align}
-
-And for the covariate:
-
-\begin{align}\label{eq:partiale2cov}
-  \eta^2_p &= \frac{SS_{covariate}}{SS_{covariate} + SS_{residuals}} \\
-  &= \frac{93.366}{93.366 + 9.468} \nonumber \\
-  &= 0.908 \nonumber
-\end{align}
-
-Inspecting these effect size values we can see that they are very similar, albeit slightly bigger for the covariate effect.
-
-Rather than calculating the $\eta^2_p$ by the equation, we can define a function in R to do this:
-
-\vspace{0.5em}
-
-```{r partial-eta-function}
-partial_eta_squared <- function(SS_effect, SS_residual) {
-  es <- SS_effect / (SS_effect + SS_residual)
-  return(es)
-}
-```
-
-\vspace{0.5em}
-
-To apply this function, first we need to put the SS values in a data frame:
-
-\vspace{0.5em}
-
-```{r SS-df}
-SS <- as.data.frame(Anova(ancova_2, type = "III"))[1]
-SS
-```
-
-\vspace{0.5em}
-
-And then we can calculate:
-
-\vspace{0.5em}
-
-```{r partial_eta_2-compute}
-# For the treatment effect
-partial_eta_squared(SS[3, 1], SS[4, 1])
-# For the covariate
-partial_eta_squared(SS[2, 1], SS[4, 1])
-```
-
-\vspace{0.5em}
-
 ### Plotting post-test scores by group
 
 To graphically present the results of our analysis, we can build a plot with our outcome variable, the post-test scores, divided by the treatment conditions, the groups. It will be, then, useful to plot the group means and their confidence intervals. First, to explore the results, we will build a plot with the non-adjusted means. Before plotting, we need to get the descriptive data and calculate the confidence intervals as:
@@ -1000,6 +936,68 @@ ggplot(data = emmeans) +
 \vspace{0.5em}
 
 Inspecting the confidence intervals in Figure \@ref(fig:ancova-plot-adj) we can concude that all groups significantly differ from each other, and that was the same conclusion we took from the ANCOVA *post hoc* tests. Furthermore, what could be observed analysing Figures \@ref(fig:ancova-plot-no-adj) and \@ref(fig:ancova-plot-adj) reinforces the importance of using an ANCOVA to adjust for baseline values in a pre-test *vs.* post-test study design.
+
+### Effect sizes
+
+A final step of the analysis is to compute the effect sizes. An effect size that is commonly calculated in ANCOVA is the partial eta squared ($\eta^2_p$). This effect size corresponds to the proportion of variance that a variable explains and that is not explained by other variables [@Field_2012], and can be expressed as:
+
+\begin{equation}
+  \eta^2_p = \frac{SS_{effect}}{SS_{effect} + SS_{residuals}}
+  (\#eq:partiale2)
+\end{equation}
+
+We can, then, look at SS values on the output of the `Anova(ancova_2, type = "III")` function, substitute these values in the Equation \@ref(eq:partiale2), and calculate the $\eta^2_p$ for the treatment effect:
+
+\begin{align}\label{eq:partiale2group}
+  \eta^2_p &= \frac{SS_{group}}{SS_{group} + SS_{residuals}} \\
+  &= \frac{69.865}{69.865 + 9.468} \nonumber \\
+  &= 0.881 \nonumber
+\end{align}
+
+And for the covariate:
+
+\begin{align}\label{eq:partiale2cov}
+  \eta^2_p &= \frac{SS_{covariate}}{SS_{covariate} + SS_{residuals}} \\
+  &= \frac{93.366}{93.366 + 9.468} \nonumber \\
+  &= 0.908 \nonumber
+\end{align}
+
+Inspecting these effect size values we can see that they are very similar, albeit slightly bigger for the covariate effect.
+
+Rather than calculating the $\eta^2_p$ by the equation, we can define a function in R to do this:
+
+\vspace{0.5em}
+
+```{r partial-eta-function}
+partial_eta_squared <- function(SS_effect, SS_residual) {
+  es <- SS_effect / (SS_effect + SS_residual)
+  return(es)
+}
+```
+
+\vspace{0.5em}
+
+To apply this function, first we need to put the SS values in a data frame:
+
+\vspace{0.5em}
+
+```{r SS-df}
+SS <- as.data.frame(Anova(ancova_2, type = "III"))[1]
+SS
+```
+
+\vspace{0.5em}
+
+And then we can calculate:
+
+\vspace{0.5em}
+
+```{r partial_eta_2-compute}
+# For the treatment effect
+partial_eta_squared(SS[3, 1], SS[4, 1])
+# For the covariate
+partial_eta_squared(SS[2, 1], SS[4, 1])
+```
 
 <!-- # Reporting the results -->
 
