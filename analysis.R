@@ -187,13 +187,10 @@ no_adj_plot_df <- descriptives %>%
 
 # Plot
 ggplot(data = no_adj_plot_df) +
-  geom_point(
-    mapping = aes(x = group, y = mean),
-    position = position_dodge(0.3)
-  ) +
+  geom_point(mapping = aes(x = group, y = mean)) +
   geom_errorbar(
     aes(x = group, ymin = lower_CI, ymax = upper_CI),
-    position = position_dodge(0.3), width = 0.3
+    width = 0.3
   )
 
 # Run an ANOVA to confirm plot
@@ -211,13 +208,10 @@ emmeans <- emmeans(ancova_2, ~ group) %>% as.data.frame()
 
 # Plot
 ggplot(data = emmeans) +
-  geom_point(
-    mapping = aes(x = group, y = emmean),
-    position = position_dodge(0.3)
-  ) +
+  geom_point(mapping = aes(x = group, y = emmean)) +
   geom_errorbar(
-    aes(x = group, ymin = lower.CL, ymax = upper.CL),
-    position = position_dodge(0.3), width = 0.3
+    aes(x = group, ymin = lower.CL, ymax = upper.CL), 
+    width = 0.3
   )
 
 # Effect sizes ------------------------------------------------------------
@@ -243,14 +237,14 @@ emmeans$group <- recode_factor(
   "High" = "High Exercise Group"
 )
 
-ggplot(data = emmeans) +
+plot <- ggplot(data = emmeans) +
   geom_point(
     mapping = aes(x = group, y = emmean),
-    position = position_dodge(0.3), size = 2.5
+    size = 2.5
   ) +
   geom_errorbar(
     aes(x = group, ymin = lower.CL, ymax = upper.CL),
-    position = position_dodge(0.3), width = 0.1, size = 1
+    width = 0.1, size = 1
   ) +
   scale_y_continuous(
     limits = c(13, 17),
@@ -265,3 +259,5 @@ ggplot(data = emmeans) +
     axis.text.x = element_text(size = 12)
   ) +
   ylab("Anxiety Score")
+
+ggsave("plot.pdf", plot, width = 8, height = 6, dpi = 100)
