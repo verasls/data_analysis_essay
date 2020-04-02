@@ -186,7 +186,7 @@ partial_eta_squared(SS[3, 1], SS[4, 1])
 # For the covariate
 partial_eta_squared(SS[2, 1], SS[4, 1])
 
-# Plot pre- and post- test scores by group --------------------------------
+# Plot post-test scores by group ------------------------------------------
 
 # ** Without adjusting for baseline ---------------------------------------
 
@@ -205,9 +205,6 @@ ggplot(data = no_adj_plot_df) +
     mapping = aes(x = group, y = mean),
     position = position_dodge(0.3)
   ) +
-  geom_line(
-    mapping = aes(x = group, y = mean, group = 1)
-  ) +
   geom_errorbar(
     aes(x = group, ymin = lower_CI, ymax = upper_CI),
     position = position_dodge(0.3), width = 0.3
@@ -215,7 +212,10 @@ ggplot(data = no_adj_plot_df) +
 
 # Run an ANOVA to confirm plot
 aov(formula = post_test ~ group, data = anxiety) %>% summary()
-pairwise.t.test(anxiety$post_test, anxiety$group, p.adjust.method = "bonferroni")
+pairwise.t.test(
+  anxiety$post_test, anxiety$group, 
+  p.adjust.method = "bonferroni"
+)
 
 # ** Adjusting for baseline -----------------------------------------------
 
