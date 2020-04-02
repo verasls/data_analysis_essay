@@ -875,13 +875,10 @@ And then create the plot:
 
 ```{r ancova-plot-no-adj, fig.pos="H", out.extra="", out.width="75%", fig.align="center", fig.cap="Post-test anxiety scores non-adjusted group means and 95\\% confidence intervals."}
 ggplot(data = no_adj_plot_df) +
-  geom_point(
-    mapping = aes(x = group, y = mean),
-    position = position_dodge(0.3)
-  ) +
+  geom_point(mapping = aes(x = group, y = mean)) +
   geom_errorbar(
     aes(x = group, ymin = lower_CI, ymax = upper_CI),
-    position = position_dodge(0.3), width = 0.3
+    width = 0.3
   )
 ```
 
@@ -923,13 +920,10 @@ emmeans
 
 ```{r ancova-plot-adj, fig.pos="H", out.extra="", out.width="75%", fig.align="center", fig.cap="Post-test anxiety scores adjusted group means and 95\\% confidence intervals."}
 ggplot(data = emmeans) +
-  geom_point(
-    mapping = aes(x = group, y = emmean),
-    position = position_dodge(0.3)
-  ) +
+  geom_point(mapping = aes(x = group, y = emmean)) +
   geom_errorbar(
     aes(x = group, ymin = lower.CL, ymax = upper.CL),
-    position = position_dodge(0.3), width = 0.3
+    width = 0.3
   )
 ```
 
@@ -999,7 +993,93 @@ partial_eta_squared(SS[3, 1], SS[4, 1])
 partial_eta_squared(SS[2, 1], SS[4, 1])
 ```
 
-<!-- # Reporting the results -->
+# Reporting the results
+
+After running all the analysis and interpreting the results, they need to be properly described in a publication. It is important to describe the ANCOVA results, namely the *F*-ratio (and its degrees of freedom), the *p* value and the effect size, for both the covariate and the treatment effect. The *post hoc* tests *t* and *p* value should also be described. An example of a paragraph describing these results can be seen below:
+
+\vspace{0.5em}
+\begin{quote}
+"The pre-test anxiety scores significantly entered as covariate in the ANCOVA model (\textit{F}(1, 41) = 404.29, \textit{p} < 0.001), with an effect size of $\eta_p^2$ = 0.91. After controlling for the pre-test scores, the post-test anxiety scores significanlty differed among groups (\textit{F}(2, 41) = 151.26, \textit{p} < 0.001), with an effect size of $\eta_p^2$ = 0.88. \textit{Post hoc} tests with Bonferroni adjustment showed that there was a significant difference between the control and moderate groups (\textit{t} = 3.09, \textit{p} = 0.011), between the control and high groups (\textit{t} = 16.38, \textit{p} < 0.001) and between the moderate and high groups (\textit{t} = 16.38, \textit{p} < 0.001)."
+\end{quote}
+\vspace{0.5em}
+
+Besides describing the results in text, we can also present a figure similar to the Figure \@ref(fig:ancova-plot-adj), but with some adjustments to make it more suitable for publication. First, we will rename the group factors levels:
+
+\vspace{0.5em}
+
+```{r recode-factor}
+emmeans$group <- recode_factor(
+  emmeans$group,
+  "Control" = "Control Group",
+  "Moderate" = "Moderate Exercise Group",
+  "High" = "High Exercise Group"
+)
+```
+
+\vspace{0.5em}
+
+Then, build another plot with the same code used to create the Figure \@ref(fig:ancova-plot-adj), but adjusting the size of the point and error bar, and assign it to an object:
+
+\vspace{0.5em}
+
+```{r pub-plot-1}
+plot <- ggplot(data = emmeans) +
+  geom_point(
+    mapping = aes(x = group, y = emmean),
+    size = 2.5
+  ) +
+  geom_errorbar(
+    aes(x = group, ymin = lower.CL, ymax = upper.CL),
+    width = 0.1, size = 1
+  )
+```
+
+\vspace{0.5em}
+
+We can now control some aspects of the plot, such as the Y axis scale, the plot theme and the axes labels. It can be done by adding some controlling functions to the plot we have just created:
+
+\vspace{0.5em}
+
+```{r pub-plot-2}
+plot <- plot +
+  scale_y_continuous(
+    limits = c(13, 17),
+    breaks = seq(13, 17, 1),
+    expand = c(0, 0)
+  ) +
+  theme_classic() +
+  theme(
+    axis.title.y = element_text(size = 14),
+    axis.title.x = element_blank(),
+    axis.text.y = element_text(size = 12),
+    axis.text.x = element_text(size = 12)
+  ) +
+  ylab("Anxiety Score")
+```
+
+\vspace{0.5em}
+
+The resulting plot can be seen below:
+
+\vspace{0.5em}
+
+```{r pub-plot-final, fig.pos="H", out.extra="", out.width="75%", fig.align="center", fig.cap="Post-test anxiety scores adjusted group means and 95\\% confidence intervals."}
+plot
+```
+
+\vspace{0.5em}
+
+And we can use the `ggsave()` function of the `ggplot2` package (part of the `tidyverse`) to save our plot into a pdf file in your working directory:
+
+\vspace{0.5em}
+
+```{r save-plot, eval=FALSE}
+ggsave("plot.pdf", plot, width = 8, height = 6, dpi = 100)
+```
+
+\vspace{0.5em}
+
+The pdf file dimentions can be controlled by the `width` and `height` arguments, and the resolution by the `dpi` argument, according to the journal figure guidelines.
 
 \pagebreak
 # References
