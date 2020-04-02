@@ -1,7 +1,7 @@
 ---
 output:
   bookdown::pdf_document2:
-    # highlight: tango
+    highlight: tango
     toc: false
     number_sections: yes
     includes:
@@ -979,7 +979,7 @@ ggplot(data = emmeans) +
 
 \vspace{0.5em}
 
-Inspecting the confidence intervals in Figure \@ref(fig:ancova-plot-adj) we can concude that all groups significantly differ from each other, and that was the same conclusion we took from the ANCOVA *post hoc* tests. Furthermore, what could be observed analysing Figures \@ref(fig:ancova-plot-no-adj) and \@ref(fig:ancova-plot-adj) reinforces the importance of using an ANCOVA to adjust for baseline values in a pre-test *vs.* post-test study design.
+Inspecting the confidence intervals in Figure \@ref(fig:ancova-plot-adj) we can conclude that all groups significantly differ from each other, and that was the same conclusion we took from the ANCOVA *post hoc* tests. Furthermore, what could be observed analysing Figures \@ref(fig:ancova-plot-no-adj) and \@ref(fig:ancova-plot-adj) reinforces the importance of using an ANCOVA to adjust for baseline values in a pre-test *vs.* post-test study design.
 
 ### Effect sizes
 
@@ -1049,7 +1049,7 @@ After running all the analysis and interpreting the results, they need to be pro
 
 \vspace{0.5em}
 \begin{quote}
-"The pre-test anxiety scores significantly entered as covariate in the ANCOVA model (\textit{F}(1, 41) = 404.29, \textit{p} < 0.001), with an effect size of $\eta_p^2$ = 0.91. After controlling for the pre-test scores, the post-test anxiety scores significanlty differed among groups (\textit{F}(2, 41) = 151.26, \textit{p} < 0.001), with an effect size of $\eta_p^2$ = 0.88. \textit{Post hoc} tests with Bonferroni adjustment showed that there was a significant difference between the control and moderate groups (\textit{t} = 3.09, \textit{p} = 0.011), between the control and high groups (\textit{t} = 16.38, \textit{p} < 0.001) and between the moderate and high groups (\textit{t} = 16.38, \textit{p} < 0.001)."
+"The pre-test anxiety scores significantly entered as covariate in the ANCOVA model (\textit{F}(1, 41) = 404.29, \textit{p} < 0.001), with an effect size of $\eta_p^2$ = 0.91. After controlling for the pre-test scores, the post-test anxiety scores significantly differed among groups (\textit{F}(2, 41) = 151.26, \textit{p} < 0.001), with an effect size of $\eta_p^2$ = 0.88. \textit{Post hoc} tests with Bonferroni adjustment showed that there was a significant difference between the control and moderate groups (\textit{t} = 3.09, \textit{p} = 0.011), between the control and high groups (\textit{t} = 16.38, \textit{p} < 0.001) and between the moderate and high groups (\textit{t} = 16.38, \textit{p} < 0.001)."
 \end{quote}
 \vspace{0.5em}
 
@@ -1129,7 +1129,7 @@ ggsave("plot.pdf", plot, width = 8, height = 6, dpi = 100)
 
 \vspace{0.5em}
 
-The pdf file dimentions can be controlled by the `width` and `height` arguments, and the resolution by the `dpi` argument, according to the journal figure guidelines.
+The pdf file dimensions can be controlled by the `width` and `height` arguments, and the resolution by the `dpi` argument, according to the journal figure guidelines.
 
 \pagebreak
 # References
