@@ -26,7 +26,7 @@ library(socviz)
 
 # Introduction
 
-The present work is a tutorial about analysis of covariance (ANCOVA) using the R Project for statistical computing. It will, first, present an introduction to R covering how to download and install it, as well as some basic concepts regarding the R programming language. After, it will approach some theoretical background behind the ANCOVA and general linear models (GLM). Then, a more practical section about how to perform an ANCOVA using R will be presented, including how to enter and explore the data, check the assumptions of the statistical test and fit the ANCOVA model. Finally, the last section will cover some suggestions on how to report the results of the test in the form of a scientific paper.
+The present work is a tutorial about analysis of covariance (ANCOVA) using the R Project for Statistical Computing. It will, first, present an introduction to R covering how to download and install it, as well as some basic concepts regarding the R programming language. After, it will approach some theoretical background behind the ANCOVA and general linear models (GLM). Then, a more practical section about how to perform an ANCOVA using R will be presented, including how to enter and explore the data, check the assumptions of the statistical test and fit the ANCOVA model. Finally, the last section will cover some suggestions on how to report the results of the test in the form of a scientific paper.
 
 # The R environment
 
@@ -50,7 +50,9 @@ Figure \@ref(fig:rstudio) shows the main RStudio window. To write and edit R cod
 
 The code can also be typed directly at the Console Panel. It is less advisable, as code typed there cannot be edited or saved to future analysis. To execute code written in a script, put the cursor on the line or highlight the lines (if there are multiple lines to be executed) and press Control + Enter, for Windows, or Command + Enter, for macOS.
 
-### Introduction to R
+The panels as shown in Figure \@ref(fig:rstudio) are in the default position and you should find your new RStudio installation like that. However, you can also modify the panels position by going to Tools > Global Options > Pane Layout. Also, the RStudio theme can be altered at the Appearance menu in the Global Options.
+
+### Introduction to R {#intro-R}
 
 This section will cover some basic aspects of the R language to help to understand how it works.
 
@@ -110,7 +112,7 @@ my_vector
 
 \vspace{0.5em}
 
-And we can see that it no longer represents the numeric vector created earlier. Another important thing regarding object names is that is R, the names are case sensitive, hence we need to pay close attention to the spelling.
+And we can see that it no longer represents the numeric vector created earlier. Another important thing regarding object names is that in R, the names are case sensitive, hence we need to pay close attention to the spelling.
 
 \vspace{0.5em}
 
@@ -120,7 +122,7 @@ My_vector
 
 \vspace{0.5em}
 
-As we can see, typing the name "`My_vector`" with a capital `M` and executing it shows an error message, as an object with this name does not exist. Another important detail is that spaces are not allowed in object names. So to facilitate naming objects, you can follow the tidyverse style guide (accessed through this link: [https://style.tidyverse.org](https://style.tidyverse.org)) and name objects with lower case and separating words with the underscore character "`_`" when needed.
+As we can see, typing the name "`My_vector`" with a capital `M` and executing it shows an error message, as an object with this name does not exist. Another important detail is that spaces are not allowed in object names. To facilitate naming objects, you can follow the tidyverse style guide (accessed through this link: [https://style.tidyverse.org](https://style.tidyverse.org)) and name objects with lower case and separating words with the underscore character "`_`" when needed.
 
 #### You do things with functions
 
@@ -135,7 +137,7 @@ function(argument1 = value1, argument2 = value2, ..., argumentN = valueN)
 
 \vspace{0.5em}
 
-We can see what arguments does a function need in their documentation by and putting a question mark before the function name executing it: `?c()`. If you execute a function without specifying a required argument it will raise an error:
+We can see what arguments does a function need in their documentation by putting a question mark before the function name and executing it: `?c()`. If you execute a function without specifying a required argument it will raise an error:
 
 \vspace{0.5em}
 
@@ -220,7 +222,7 @@ getwd()
 
 You can change your working directory using the `setwd()` function. For this tutorial, I recommend to create a new R script file and save it in a folder named "`ancova_tutorial`" at your desktop, for example. In the first line of this R script you can change your working directory to this folder by doing:
 
-For Windows:
+For Windows (replace "`your_username`" by your actual username):
 
 \vspace{0.5em}
 
@@ -242,13 +244,13 @@ setwd("~/Desktop/ancova_tutorial")
 
 #### Final remarks
 
-In the [**Performing an ANCOVA using R**](#Performing-an-ANCOVA-using-R) section, the code necessary to perform each step of the data analysis will be presented. You can copy and paste this code into your R script saved inside the `ancova_tutorial` folder in your desktop (or anywhere else) and execute it step by step while reading the tutorial. You can also access the entire code in the following link: [https://raw.githubusercontent.com/verasls/data_analysis_essay/master/analysis.R](https://raw.githubusercontent.com/verasls/data_analysis_essay/master/analysis.R).
+In the [**Performing an ANCOVA using R**](#ancova-R) section, the code necessary to perform each step of the data analysis will be presented. You can copy and paste this code into your R script saved inside the `ancova_tutorial` folder in your desktop (or anywhere else) and execute it step by step while reading the tutorial. You can also access the entire code in the following link: [https://raw.githubusercontent.com/verasls/data_analysis_essay/master/analysis.R](https://raw.githubusercontent.com/verasls/data_analysis_essay/master/analysis.R).
 
 # The ANCOVA
 
 ## What is ANCOVA?
 
-Sometimes a researcher wants to evaluate whether or not the means of an outcome variable are equal among different treatment conditions. These treatment conditions are usually expressed through categorical variables and, when there are at least three conditions (or groups), the statistical test more suitable to answer this question is an analysis of variance (ANOVA) [@Field_2012]. The ANOVA model can be expanded by the inclusion of a continuous variable in addition to the treatment conditions categorical variable [@Rutherford_2011]. When these continuous variables have an influence on the outcome, but have not been controlled by the experimental manipulations, they are called covariates, and the inclusion of covariates in the ANOVA is a method called analysis of covariance (ANCOVA) [@Rutherford_2011; @Field_2012]. By controlling for the covariate, the ANCOVA is a statistical procedure that evaluates more precisely the treatment effect of the experimental manipulations, as it eliminates the variance that was not due to the treatment itself and would have been residual variance in an ANOVA [@Field_2012]. The ANCOVA, then, has two important features: i) it reduces error variance, increasing the fit of the model; and ii) it eliminates the confounding effects of other variables on the experimental conditions [@Field_2012].
+Sometimes a researcher wants to evaluate whether or not the means of an outcome variable are equal among different treatment conditions. These treatment conditions are usually expressed through categorical variables and, when there are at least three conditions (or groups), the statistical test more suitable to answer this question is an analysis of variance (ANOVA) [@Field_2012]. The ANOVA model can be expanded by the inclusion of a continuous variable in addition to the treatment conditions categorical variable [@Rutherford_2011]. When these continuous variables have an influence on the outcome, but have not been controlled by the experimental manipulations, they are called covariates, and the inclusion of covariates in the ANOVA is a method called analysis of covariance - or ANCOVA [@Rutherford_2011; @Field_2012]. By controlling for the covariate, the ANCOVA is a statistical procedure that evaluates more precisely the treatment effect of the experimental manipulations, as it eliminates the variance that was not due to the treatment itself and would have been residual variance in an ANOVA [@Field_2012]. The ANCOVA, then, has two important features: i) it reduces error variance, increasing the fit of the model; and ii) it eliminates the confounding effects of other variables on the experimental conditions [@Field_2012].
 
 \vspace{0.5em}
 
@@ -304,20 +306,22 @@ As any statistical test, the ANCOVA has a series of assumptions that need to be 
 
 - Normal distribution of data: the sample distribution must be normal within the groups.
 - Homogeneity of variance: the variances must be equal across the groups.
-- Interval data: data must be measured continuous, measured at least at the interval level.
+- Interval data: data must be continuous, measured at least at the interval level.
 - Independence: data from different participants should be independent from each other.
 
 At the data analysis, the main assumptions that need to be checked are the first two. The normality of data distribution can be checked visually (with histograms or Q-Q plots, for example) or with a normality test such as Shapiro-Wilk, while the homogeneity of variance can be checked through the Levene's test [@Field_2012].
 
 Also, there are some assumptions specific to the ANCOVA. First, is the independence of the covariate and the treatment effect [@Rutherford_2011; @Field_2012]. The importance of this assumption is that, if the covariate and the treatment effect (the independent variable) are not independent, they share some variance, and the experimental effect will be confounded by the covariate [@Field_2012]. That is, part of the variance that would be explained by the treatment effect will be, then, explained by the covariate [@Field_2012].
 
-A second assumption is the linearity of between the covariate and the outcome variable [@Rutherford_2011; @Field_2012]. As the ANCOVA is a GLM, a linear regression will be fit with the covariate as one of the predictors [@Rutherford_2011]. Therefore, it should be expected that the covariate has a linear relationship with the dependent variable [@Rutherford_2011].
+A second assumption is the linearity between the covariate and the outcome variable [@Rutherford_2011; @Field_2012]. As the ANCOVA is a GLM, a linear regression will be fit with the covariate as one of the predictors [@Rutherford_2011]. Therefore, it should be expected that the covariate has a linear relationship with the dependent variable [@Rutherford_2011].
 
 The last assumption is the homogeneity of regression slopes [@Rutherford_2011; @Field_2012]. For this assumption to be true, the linear regression slopes of the relationship between the covariate and the dependent variable should be homogeneous across the groups [@Field_2012]. It happens due to the fact that, when the ANCOVA model is built, what matters is the overall relationship between the covariate and the outcome, regardless of the groups, and if the regression slope is different across the groups, the model is inaccurate [@Field_2012]. It also means that there is no interaction effect between the covariate and the treatment effect, that is not part of a traditional ANCOVA model [@Rutherford_2011].
 
 \vspace{0.5em}
 
-# Performing an ANCOVA using R
+# Performing an ANCOVA using R {#ancova-R}
+
+From now on, it will be presented a practical tutorial, step by step, on how to perform an ANCOVA using R. The code necessary to each step, and an explanation of what it does, will be given. You can either type the code into an R script, paying close attention to the correct spelling of the commands, or copy and paste it. Remember that a brief introduction of some aspects of the R programming language was given at the [**Introduction to R**](#intro-R) section.
 
 ## Installing and loading necessary packages
 
@@ -330,11 +334,12 @@ In order to perform all the analysis in this tutorial, you will need to install 
 - `car`: To calculate the Type III sum of squares (SS) and to execute the Levene's test;
 - `emmeans`: To compute the estimated marginal means from the models.
 
-Execute these commands to install the packages:
+To install R packages, we will use the function `install.packages()`, with the package name between quotation marks as the only argument:
 
 \vspace{0.5em}
 
 ```{r install-packs, eval=FALSE}
+install.packages("datarium")
 install.packages("tidyverse")
 install.packages("car")
 install.packages("emmeans")
@@ -342,7 +347,7 @@ install.packages("emmeans")
 
 \vspace{0.5em}
 
-And then, these commands to load the packages into your R session:
+And then, use the `library()` function to load the packages into your R session. In the `library()` function the packages names must go without the quotation marks:
 
 \vspace{0.5em}
 
@@ -351,6 +356,10 @@ library(tidyverse)
 library(car)
 library(emmeans)
 ```
+
+\vspace{0.5em}
+
+Note that the `datarium` package does not need to be loaded.
 
 ## Entering the data
 
@@ -375,7 +384,7 @@ anxiety <- anxiety %>%
   as_tibble() %>% 
   select(id, group, pre_test = t1, post_test = t3)
 
-# Recode exercise factors
+# Recode group factors
 anxiety$group <- recode_factor(
   anxiety$group,
   "grp1" = "Control",
@@ -386,7 +395,7 @@ anxiety$group <- recode_factor(
 
 \vspace{0.5em}
 
-And the data frame can, then, be inspected:
+And the data in the tibble can, then, be inspected:
 
 \vspace{0.5em}
 
@@ -438,7 +447,7 @@ ggplot(data = anxiety_long, mapping = aes(x = group, y = score)) +
     stackdir = "center",
     dotsize = 0.7,
     binwidth = 0.3,
-    fill= "white"
+    fill = "white"
   ) +
   facet_wrap(~time) +
   labs(x = "Group", y = "Anxiety score")
@@ -446,7 +455,7 @@ ggplot(data = anxiety_long, mapping = aes(x = group, y = score)) +
 
 \vspace{0.5em}
 
-As can be observed in the Figure \@ref(fig:boxplot) boxplots, pre-test anxiety score values are roughly equal among groups, while the post-test scores tend to be lower for the moderate, but mainly for the high intensity group, compared to the control. This indicates that there is at least a tendency to the exercise to decrease an individual`s anxiety level, and exercise intensity may play a role in it. Also, there is no clear difference in the spread of the scores among groups at both time points.
+As can be observed in the Figure \@ref(fig:boxplot) boxplots, the pre-test anxiety score values are roughly equal among groups, while the post-test scores tend to be lower for the moderate, but mainly for the high intensity group, compared to the control. This indicates that there is at least a tendency to the exercise to decrease an individual`s anxiety level, and exercise intensity may play a role in it. Also, there is no clear difference in the spread of the scores among groups at both time points.
 
 Another useful plot to make is the histogram, as we need to verify whether the pre- and post-test scores are normally distributed in all of the groups, which is an assumption of parametric tests, such as the ANCOVA [@Rutherford_2011; @Field_2012]. We can plot a frequency histogram by executing the following code:
 
@@ -461,7 +470,7 @@ ggplot(data = anxiety, mapping = aes(pre_test)) +
 
 \vspace{0.5em}
 
-The resulting plot in Figure \@ref(fig:histogram-test) is not very illustrative of the data. A way to improve it would be to manually adjust the histogram bin width. The Freedman-Diaconis rule [@Freedman_1981] can be used to select the best width, and it is shown in Equation \@ref(eq:freedman).
+The resulting plot in Figure \@ref(fig:histogram-test) is not very illustrative of the data. A way to improve it would be to manually adjust the histograms bin width. The Freedman-Diaconis rule [@Freedman_1981] can be used to select the best width, and it is shown in Equation \@ref(eq:freedman).
 
 \begin{equation}
   bin\ width = 2\frac{IQR(x)}{n^\frac{1}{3}}
@@ -636,7 +645,7 @@ ggplot(
     method = "lm",
     se = FALSE
   ) +
-  guides(color=guide_legend("group")) +
+  guides(color = guide_legend("group")) +
   labs(
     x = "Pre-test",
     y = "Post-test"
@@ -657,7 +666,7 @@ aov(formula = post_test ~ pre_test * group, data = anxiety) %>% summary()
 
 \vspace{0.5em}
 
-In the output above, by looking at the line regarding the interaction term (`pre_test:group`), we can see that it is not statistically significant, as the *p* value (at the `Pr(> F)` column) is > 0.05.
+In the output above, by looking at the line regarding the interaction term (`pre_test:group`), we can see that it is not statistically significant, as the *p* value (at the `Pr(>F)` column) is > 0.05.
 
 ## The ANCOVA model in R
 
@@ -687,7 +696,7 @@ Anova(ancova, type = "III")
 
 \vspace{0.5em}
 
-By looking at the *p* values (`Pr(>F)` column), we can see that the covariate  significantly influences the post-test scores (`pre_test` *p* < 0.001), and that, when removing the effect of the covariate, there is a significant treatment effect (`group` *p* < 0.001). We can, then, look at the descriptive statistics for the post-test scores among groups:
+By looking at the *p* values (`Pr(>F)` column), we can see that the covariate significantly influences the post-test scores (`pre_test` *p* < 0.001), and that, when removing the effect of the covariate, there is a significant treatment effect (`group` *p* < 0.001). We can, then, look at the descriptive statistics for the post-test scores among groups:
 
 \vspace{0.5em}
 
@@ -699,7 +708,7 @@ descriptives %>%
 
 \vspace{0.5em}
 
-According to the ANCOVA results, we can assume that these means are statistically different, although we still cannot say among which groups these differences lie. But, actually, these means have not been adjusted for the covariate, they are the original means. To obtain the adjusted means (also called estimated marginal means or least squares means), we can use the `emmeans()` function:
+According to the ANCOVA results, we can assume that these means are significantly different, although we still cannot say between which groups these differences lie. But, actually, these means have not been adjusted for the covariate, they are the original means. To obtain the adjusted means (also called estimated marginal means or least squares means), we can use the `emmeans()` function:
 
 \vspace{0.5em}
 
@@ -713,7 +722,7 @@ We can see that these means are slightly different from the original means, as, 
 
 ### Interpreting the contrasts
 
-As the ANCOVA is part of the GLM, the calculations behind it are the same as for a linear regression. Therefore, for categorical variables, such as the `group` variable, we need to recode it into dummy variables, which are categorical variables with two numeric codes: 0 for one group, and 1 for the other. In our case, with three groups, two dummy variables are needed. R automatically does it, and we can inspect these contrasts using the `contrasts()` function:
+As the ANCOVA is part of the GLM, the calculations behind it are the same as for a multiple linear regression. Therefore, for categorical variables, such as the `group` variable, we need to recode it into dummy variables, which are categorical variables with two numeric codes: 0 for one group, and 1 for the other. In our case, with three groups, two dummy variables are needed. R automatically does it, and we can inspect these contrasts using the `contrasts()` function:
 
 \vspace{0.5em}
 
@@ -787,7 +796,7 @@ Total    & 0          & 0          & 0       \\
 \end{tabular}
 \end{table}
 
-We can see in Table \@ref(tab:tab-contrast) that the sum of each contrast coefficients is 0. Also the sum of the coefficients products also equals to 0, therefore we can conclude that these contrasts are indeed orthogonal. Examining the Contrast 1, it shows that the control group has a weight of 2, as it is being compared against the means of two other groups, and the moderate and high groups have the same weight and a different sign than the control. For the Contrast 2, the weight of the control group is 0, as it was already singled out in the Contrast 1, and the moderate and high groups have the same weight, but with different signs, as they now are being compared with one another.
+We can see in Table \@ref(tab:tab-contrast) that the sum of each contrast coefficients is 0 (Total row). Also the sum of the coefficients products also equals to 0, therefore we can conclude that these contrasts are indeed orthogonal. Examining the Contrast 1, it shows that the control group has a weight of 2, as it is being compared against the means of two other groups, and the moderate and high groups have the same weight and a different sign than the control. For the Contrast 2, the weight of the control group is 0, as it was already singled out in the Contrast 1, and the moderate and high groups have the same weight, but with different signs, as they now are being compared with one another.
 
 These contrasts can be established in R by the following command:
 
@@ -859,7 +868,7 @@ pairs(emmeans(ancova_2, ~ group), adjust = "Tukey")
 
 \vspace{0.5em}
 
-We can see that all parameters (estimated differences, standard error and *t*-ratio) are the same among the adjustment, as they only adjust the *p* value. In this case, the same conclusion can be taken from all the three *post hoc* adjustment methods: all three groups adjusted means significantly differ from each other.
+We can see that all parameters (estimated differences, standard error, degrees of freedom and *t*-ratio) are the same among the adjustment, as they only adjust the *p* value. In this case, the same conclusion can be taken from all the three *post hoc* adjustment methods: all three groups adjusted means significantly differ from each other.
 
 ### Model diagnostic plots
 
@@ -944,7 +953,7 @@ aov(formula = post_test ~ group, data = anxiety) %>% summary()
 
 \vspace{0.5em}
 
-As it showed significant differences between the groups (*p* < 0.001), we can ask for *post hoc* tests to discover between which groups these differences are. We can use the `pairwise.t.test()` function with the Bonferroni adjustment (`p.adjust.method = "bonferroni"`) to run the *post hoc* tests in our non-adjusted means:
+As it showed significant differences between the groups (*p* < 0.001), we can ask for *post hoc* tests to discover between which groups these differences are. We can use the `pairwise.t.test()` function with the Bonferroni adjustment (argument `p.adjust.method = "bonferroni"`) to run the *post hoc* tests in our non-adjusted means:
 
 \vspace{0.5em}
 
@@ -957,7 +966,7 @@ pairwise.t.test(
 
 \vspace{0.5em}
 
-These results confirm what was shown in Figure \@ref(fig:ancova-plot-no-adj): no significant differences between the control and moderate groups (*p* = 0.281). Now, to represent the ANCOVA results, we will put the adjusted means into a data frame and build the same plot using these means:
+These results confirm what was shown in Figure \@ref(fig:ancova-plot-no-adj): no significant differences between the control and moderate groups (*p* > 0.05). Now, to represent the ANCOVA results, we will put the adjusted means into a data frame and build the same plot using these means:
 
 \vspace{0.5em}
 
@@ -1119,7 +1128,7 @@ plot
 
 \vspace{0.5em}
 
-And we can use the `ggsave()` function of the `ggplot2` package (part of the `tidyverse`) to save our plot into a pdf file in your working directory:
+And we can use the `ggsave()` function to save our plot into a pdf file in the working directory:
 
 \vspace{0.5em}
 
