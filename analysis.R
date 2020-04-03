@@ -268,4 +268,6 @@ plot <- ggplot(data = emmeans) +
   ) +
   ylab("Anxiety Score")
 
+plot
+
 ggsave("plot.pdf", plot, width = 8, height = 6, dpi = 100)
