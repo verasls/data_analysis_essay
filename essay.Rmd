@@ -42,15 +42,15 @@ I also suggest to install and use RStudio, which is an integrated development en
 
 ### The RStudio interface
 
-```{r rstudio, echo=FALSE, out.extra="", out.width="100%", fig.align="center", fig.cap="RStudio main window. Letter A indicates the Source Pannel; Letter B the Console Pannel; and Letter C the Files/Plots/Packages/Help/Viewer Pannel."}
+```{r rstudio, echo=FALSE, out.extra="", out.width="100%", fig.align="center", fig.cap="RStudio main window. Letter A indicates the Source Pane; Letter B the Console Pane; and Letter C the Files/Plots/Packages/Help/Viewer Pane."}
 knitr::include_graphics("figs/RStudio.png")
 ```
 
-Figure \@ref(fig:rstudio) shows the main RStudio window. To write and edit R code to run your analysis, you need to create a new R script file (File > New File > R Script) that will be shown in the Source Panel, located in the top left part of the screen and indicated by the letter A in the figure. Once ready to run, you can send the code to be evaluated by the software. The code, then, will appear in the Console Panel, along with any output it produces. The Console panel is located below the Source panel, and is indicated by the letter B in the figure. Another important panel is indicated by the letter C. It contains the Plots tab, that will show any graphic produced by your code.
+Figure \@ref(fig:rstudio) shows the main RStudio window. To write and edit R code to run your analysis, you need to create a new R script file (File > New File > R Script) that will be shown in the Source Pane, located in the top left part of the screen and indicated by the letter A in the figure. Once ready to run, you can send the code to be evaluated by the software. The code, then, will appear in the Console Pane, along with any output it produces. The Console pane is located below the Source pane, and is indicated by the letter B in the figure. Another important pane is indicated by the letter C. It contains the Plots tab, that will show any graphic produced by your code.
 
-The code can also be typed directly at the Console Panel. It is less advisable, as code typed there cannot be edited or saved to future analysis. To execute code written in a script, put the cursor on the line or highlight the lines (if there are multiple lines to be executed) and press Control + Enter, for Windows, or Command + Enter, for macOS.
+The code can also be typed directly at the Console Pane. It is less advisable, as code typed there cannot be edited or saved to future analysis. To execute code written in a script, put the cursor on the line or highlight the lines (if there are multiple lines to be executed) and press Control + Enter, for Windows, or Command + Enter, for macOS.
 
-The panels as shown in Figure \@ref(fig:rstudio) are in the default position and you should find your new RStudio installation like that. However, you can also modify the panels position by going to Tools > Global Options > Pane Layout. Also, the RStudio theme can be altered at the Appearance menu in the Global Options.
+The panes as shown in Figure \@ref(fig:rstudio) are in the default position and you should find your new RStudio installation like that. However, you can also modify the panes position by going to Tools > Global Options > Pane Layout. Also, the RStudio theme can be altered at the Appearance menu in the Global Options.
 
 ### Introduction to R {#intro-R}
 
