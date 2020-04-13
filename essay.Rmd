@@ -359,7 +359,7 @@ library(emmeans)
 
 \vspace{0.5em}
 
-Note that the `datarium` package does not need to be loaded.
+Note that the packages installation (`install.packages()` function) only needs to be done once, while loading the package (`library()` function) needs to be done every time you open a new R session. Also, observe that the `datarium` package does not need to be loaded.
 
 ## Entering the data
 
